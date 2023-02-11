@@ -1,7 +1,24 @@
 # TODO
 
-- [ ] Basic View and interface
-- [ ] Basic ViewModel and interface 
-- [ ] Read for Label control
-- [ ] Read/write for Textbox control
-- [ ] Caption/Enabled/Click for Commandbutton control
+- [x] Basic View and interface
+- [x] Basic ViewModel and interface 
+- [x] Read for Label control
+- [x] Read/write for Textbox control
+- Command Button
+    - [x] Caption
+    - [ ] Enabled
+    - [x] Click
+- ListView (single column)
+    - [ ] Load from Collection
+    - [ ] Load from Array
+    - [ ] Load from Range
+    - [ ] Load from ListColumn
+    - [ ] Load from Data Validation
+    - [ ] Load from Conditional Formatting
+- [ ] Actions, ICommand, and CanExecute
+- [ ] Checkbox
+- [ ] Option groups
+- [ ] ListView (multi-column and icons)
+- [ ] TreeView
+- [ ] IsDirty flag
+- [ ] Fix EventHandlers to use IViewModel instead of concrete ViewModel class
