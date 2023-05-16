@@ -19,6 +19,8 @@ Private WithEvents lb As MSForms.Label
 Attribute lb.VB_VarHelpID = -1
 Private WithEvents cbo As MSForms.ComboBox
 Attribute cbo.VB_VarHelpID = -1
+Private WithEvents lv As MSComctlLib.ListView
+Attribute lv.VB_VarHelpID = -1
 
 Private Type TState
     'ViewModel As IViewModel
@@ -56,6 +58,8 @@ Public Sub Update(ByVal ctrl As MSForms.Control, ByVal PropertyName As String, B
         Set lb = ctrl
     ElseIf TypeOf ctrl Is MSForms.ComboBox Then
         Set cbo = ctrl
+    ElseIf TypeOf ctrl Is MSComctlLib.ListView Then
+        Set lv = ctrl
     End If
 End Sub
 
@@ -69,7 +73,7 @@ End Sub
 
 Public Sub Repaint()
     Debug.Assert Not This.ViewModel Is Nothing
-    
+    ' TODO Get 'CallByName(This.ViewModel, Name, VbGet)' once
     If Not cb Is Nothing Then
         cb.Caption = CallByName(This.ViewModel, Name, VbGet)
     ElseIf Not tb Is Nothing Then
@@ -83,6 +87,15 @@ Public Sub Repaint()
         cbo.AddItem "Small"
         cbo.AddItem "Medium"
         cbo.AddItem "Large"
+    ElseIf Not lv Is Nothing Then
+        lv.ListItems.Clear
+        lv.ListItems.Add Text:="Small"
+        lv.ListItems.Add Text:="Medium"
+        lv.ListItems.Add Text:="Large"
+        Dim li As ListItem
+        For Each li In lv.ListItems
+            li.Selected = li.Text = CallByName(This.ViewModel, Name, VbGet)
+        Next li
     End If
 End Sub
 
@@ -95,5 +108,10 @@ Private Sub tb_Change()
 End Sub
 
 Private Sub cbo_Change()
-    MsgBox "cbo_Change(" & This.Name & ")"
+    Debug.Print
+End Sub
+
+Private Sub lv_ItemClick(ByVal Item As MSComctlLib.ListItem)
+    MsgBox "lv_Change(" & This.Name & ")"
+    CallByName This.ViewModel, Name, VbLet, Item.Text
 End Sub

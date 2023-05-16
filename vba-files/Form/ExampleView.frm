@@ -60,11 +60,25 @@ Private Function IView_ShowDialog(ByVal ViewModel As Object) As Boolean
     Set vm = ViewModel
     vm.Foo = "test"
     
+    InitializeListViews
     BindControls
     
     Me.Show
     IView_ShowDialog = Not This.IsCancelled
 End Function
+
+Private Sub InitializeListViews()
+    With Me.lvSize
+        .view = lvwReport
+        '.Arrange = lvwAutoLeft
+        .Gridlines = True
+        .LabelEdit = lvwManual
+        .HideSelection = False
+        .FullRowSelect = True
+        .ColumnHeaders.Clear
+        .ColumnHeaders.Add Text:="Value"
+    End With
+End Sub
 
 Private Sub BindControls()
     Set This.EventHandlers = New Collection
@@ -75,6 +89,7 @@ Private Sub BindControls()
     BindControl Me.txtFirstname, "FirstName"
     BindControl Me.txtLastName, "LastName"
     BindControl Me.cboSize, "Size"
+    BindControl Me.lvSize, "Size"
 End Sub
 
 Private Sub BindControl(ByVal ctrl As Control, ByVal PropertyName As String)
