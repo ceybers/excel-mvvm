@@ -7,7 +7,7 @@ Public Sub TestView()
     Set view = New ExampleView
     
     Dim vm As IViewModel
-    Set vm = GetTestViewModel
+    Set vm = GetSampleViewModel
     
     With view
         If .ShowDialog(vm) Then

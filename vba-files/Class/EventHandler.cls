@@ -17,10 +17,12 @@ Private WithEvents tb As MSForms.TextBox
 Attribute tb.VB_VarHelpID = -1
 Private WithEvents lb As MSForms.Label
 Attribute lb.VB_VarHelpID = -1
+Private WithEvents cbo As MSForms.ComboBox
+Attribute cbo.VB_VarHelpID = -1
 
 Private Type TState
     'ViewModel As IViewModel
-    ViewModel As ExampleViewModel
+    ViewModel As ViewModel
     Name As String
 End Type
 Private This As TState
@@ -33,11 +35,11 @@ Public Property Let Name(ByVal RHS As String)
     This.Name = RHS
 End Property
 
-Public Property Get ViewModel() As ExampleViewModel
+Public Property Get ViewModel() As ViewModel
     Set ViewModel = This.ViewModel
 End Property
 
-Public Property Set ViewModel(ByVal RHS As ExampleViewModel)
+Public Property Set ViewModel(ByVal RHS As ViewModel)
     Set This.ViewModel = RHS
 End Property
 
@@ -52,6 +54,8 @@ Public Sub Update(ByVal ctrl As MSForms.Control, ByVal PropertyName As String, B
         Set tb = ctrl
     ElseIf TypeOf ctrl Is MSForms.Label Then
         Set lb = ctrl
+    ElseIf TypeOf ctrl Is MSForms.ComboBox Then
+        Set cbo = ctrl
     End If
 End Sub
 
@@ -72,6 +76,13 @@ Public Sub Repaint()
         tb.Value = CallByName(This.ViewModel, Name, VbGet)
     ElseIf Not lb Is Nothing Then
         lb.Caption = CallByName(This.ViewModel, Name, VbGet)
+    ElseIf Not cbo Is Nothing Then
+        cbo.Clear
+        cbo.Value = CallByName(This.ViewModel, Name, VbGet)
+        ' TODO Implement this in VM
+        cbo.AddItem "Small"
+        cbo.AddItem "Medium"
+        cbo.AddItem "Large"
     End If
 End Sub
 
@@ -81,4 +92,8 @@ End Sub
 
 Private Sub tb_Change()
     Debug.Print "tb_Change(" & This.Name & ")"
+End Sub
+
+Private Sub cbo_Change()
+    MsgBox "cbo_Change(" & This.Name & ")"
 End Sub

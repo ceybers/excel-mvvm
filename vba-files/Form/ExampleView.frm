@@ -18,7 +18,7 @@ Option Explicit
 Implements IView
  
 '@MemberAttribute VB_VarHelpID, -1
-Private WithEvents vm As ExampleViewModel
+Private WithEvents vm As ViewModel
 Attribute vm.VB_VarHelpID = -1
 Private Type TView
     IsCancelled As Boolean
@@ -74,6 +74,7 @@ Private Sub BindControls()
     BindControl Me.lblFoobar, "foo"
     BindControl Me.txtFirstname, "FirstName"
     BindControl Me.txtLastName, "LastName"
+    BindControl Me.cboSize, "Size"
 End Sub
 
 Private Sub BindControl(ByVal ctrl As Control, ByVal PropertyName As String)
