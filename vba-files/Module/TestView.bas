@@ -3,11 +3,14 @@ Attribute VB_Name = "TestView"
 Option Explicit
 
 Public Sub TestView()
+    Dim ctx As AppContext
+    Set ctx = New AppContext
+    
     Dim view As IView
     Set view = New ExampleView
     
     Dim vm As IViewModel
-    Set vm = GetSampleViewModel
+    Set vm = GetSampleViewModel(ctx)
     
     With view
         If .ShowDialog(vm) Then

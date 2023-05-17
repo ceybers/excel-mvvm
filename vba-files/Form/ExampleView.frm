@@ -28,10 +28,10 @@ End Type
 Private This As TView
 
 Private Sub cmbTest_Click()
-    vm.Foo = "zzz"
+    vm.DebugPrint
 End Sub
 
-Private Sub CommandButton1_Click()
+Private Sub cmdSetNameToBob_Click()
     vm.FirstName = "Bob"
 End Sub
 
@@ -43,6 +43,7 @@ Private Sub CancelButton_Click()
     OnCancel
 End Sub
  
+
 Private Sub UserForm_QueryClose(Cancel As Integer, CloseMode As Integer)
     If CloseMode = VbQueryClose.vbFormControlMenu Then
         Cancel = True
@@ -58,12 +59,11 @@ End Sub
 Private Function IView_ShowDialog(ByVal ViewModel As Object) As Boolean
     'Set This.ViewModel = ViewModel
     Set vm = ViewModel
-    vm.Foo = "test"
     
     InitializeListViews
     BindControls
     
-    Me.Show
+    Me.Show vbModal
     IView_ShowDialog = Not This.IsCancelled
 End Function
 
@@ -86,10 +86,12 @@ Private Sub BindControls()
     BindControl Me.cmbTest, "Foo"
     BindControl Me.txtFoobar, "Bar"
     BindControl Me.lblFoobar, "foo"
-    BindControl Me.txtFirstname, "FirstName"
+    'BindControl Me.txtFirstname, "FirstName"
     BindControl Me.txtLastName, "LastName"
     BindControl Me.cboSize, "Size"
     BindControl Me.lvSize, "Size"
+    
+    vm.Context.BindingManager.BindPropertyPath vm, "FirstName", Me.txtFirstname, "Value"
 End Sub
 
 Private Sub BindControl(ByVal ctrl As Control, ByVal PropertyName As String)

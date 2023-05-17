@@ -15,6 +15,8 @@ Implements INotifyPropertyChanged
 Event PropertyChanged(ByVal PropertyName As String)
 
 Private Type TState
+    AppContext As AppContext
+    
     FirstName As String
     LastName As String
     DateOfBirth As Date
@@ -23,6 +25,14 @@ Private Type TState
     Size As String
 End Type
 Private This As TState
+
+Public Property Get Context() As AppContext
+    Set Context = This.AppContext
+End Property
+
+Public Property Set Context(ByVal vNewValue As AppContext)
+    Set This.AppContext = vNewValue
+End Property
 
 Public Property Get FirstName() As String
     FirstName = This.FirstName
@@ -108,4 +118,15 @@ End Sub
 
 Private Sub OnPropertyChanged(ByVal PropertyName As String)
     INotifyPropertyChanged_OnPropertyChanged PropertyName
+End Sub
+
+Public Sub DebugPrint()
+    Debug.Print "ViewModel.DebugPrint()"
+    Debug.Print " FirstName: "; FirstName
+    'Debug.Print " LastName: "; LastName
+    'Debug.Print " DateOfBirth: "; DateOfBirth
+    'Debug.Print " Foo: "; Foo
+    'Debug.Print " Bar: "; Bar
+    Debug.Print " Size: "; Size
+    Debug.Print "---"
 End Sub

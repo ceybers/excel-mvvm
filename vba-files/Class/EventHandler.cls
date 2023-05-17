@@ -11,6 +11,9 @@ Attribute VB_Exposed = False
 '@Folder("VBAProject")
 Option Explicit
 
+Private WithEvents vm As ViewModel
+Attribute vm.VB_VarHelpID = -1
+
 Private WithEvents cb As MSForms.CommandButton
 Attribute cb.VB_VarHelpID = -1
 Private WithEvents tb As MSForms.TextBox
@@ -23,8 +26,6 @@ Private WithEvents lv As MSComctlLib.ListView
 Attribute lv.VB_VarHelpID = -1
 
 Private Type TState
-    'ViewModel As IViewModel
-    ViewModel As ViewModel
     Name As String
 End Type
 Private This As TState
@@ -38,17 +39,17 @@ Public Property Let Name(ByVal RHS As String)
 End Property
 
 Public Property Get ViewModel() As ViewModel
-    Set ViewModel = This.ViewModel
+    Set ViewModel = vm
 End Property
 
 Public Property Set ViewModel(ByVal RHS As ViewModel)
-    Set This.ViewModel = RHS
+    Set vm = RHS
 End Property
 
 Public Sub Update(ByVal ctrl As MSForms.Control, ByVal PropertyName As String, ByVal vm As IViewModel)
     'Set Create = New EventHandler
     Name = PropertyName
-    Set This.ViewModel = vm
+    Set ViewModel = vm
     
     If TypeOf ctrl Is MSForms.CommandButton Then
         Set cb = ctrl
@@ -64,7 +65,7 @@ Public Sub Update(ByVal ctrl As MSForms.Control, ByVal PropertyName As String, B
 End Sub
 
 Public Sub HandlePropertyChanged(ByVal PropertyName As String)
-    If This.ViewModel Is Nothing Then Exit Sub
+    If ViewModel Is Nothing Then Exit Sub
     
     If PropertyName = Name Then
         Repaint
@@ -72,17 +73,17 @@ Public Sub HandlePropertyChanged(ByVal PropertyName As String)
 End Sub
 
 Public Sub Repaint()
-    Debug.Assert Not This.ViewModel Is Nothing
+    Debug.Assert Not ViewModel Is Nothing
     ' TODO Get 'CallByName(This.ViewModel, Name, VbGet)' once
     If Not cb Is Nothing Then
-        cb.Caption = CallByName(This.ViewModel, Name, VbGet)
+        cb.Caption = CallByName(ViewModel, Name, VbGet)
     ElseIf Not tb Is Nothing Then
-        tb.Value = CallByName(This.ViewModel, Name, VbGet)
+        tb.Value = CallByName(ViewModel, Name, VbGet)
     ElseIf Not lb Is Nothing Then
-        lb.Caption = CallByName(This.ViewModel, Name, VbGet)
+        lb.Caption = CallByName(ViewModel, Name, VbGet)
     ElseIf Not cbo Is Nothing Then
         cbo.Clear
-        cbo.Value = CallByName(This.ViewModel, Name, VbGet)
+        cbo.Value = CallByName(ViewModel, Name, VbGet)
         ' TODO Implement this in VM
         cbo.AddItem "Small"
         cbo.AddItem "Medium"
@@ -94,7 +95,7 @@ Public Sub Repaint()
         lv.ListItems.Add Text:="Large"
         Dim li As ListItem
         For Each li In lv.ListItems
-            li.Selected = li.Text = CallByName(This.ViewModel, Name, VbGet)
+            li.Selected = li.Text = CallByName(ViewModel, Name, VbGet)
         Next li
     End If
 End Sub
@@ -105,13 +106,16 @@ End Sub
 
 Private Sub tb_Change()
     Debug.Print "tb_Change(" & This.Name & ")"
+    CallByName ViewModel, Name, VbLet, tb.Value
 End Sub
 
 Private Sub cbo_Change()
-    Debug.Print
+    Debug.Print "cbo_Change(" & This.Name & ")"
+    CallByName ViewModel, Name, VbLet, cbo.Value
 End Sub
 
 Private Sub lv_ItemClick(ByVal Item As MSComctlLib.ListItem)
-    MsgBox "lv_Change(" & This.Name & ")"
-    CallByName This.ViewModel, Name, VbLet, Item.Text
+    Debug.Print "lv_Change(" & This.Name & ")"
+    CallByName ViewModel, Name, VbLet, Item.Text
 End Sub
+
