@@ -79,15 +79,13 @@ Private Function ResolvePropertyPath(ByVal Context As Object, ByVal PropertyPath
     Tokens = Split(PropertyPath, ".")
     
     If UBound(Tokens) = 1 Then
-        Dim actx As SomeViewModel
-        Set actx = Context
-        Set ResolvePropertyPath = CallByName(actx, Tokens(0), VbGet)
+        Set ResolvePropertyPath = CallByName(Context, Tokens(0), VbGet)
         Exit Function
     Else
         Dim ctx As SomeViewModel
         Set ctx = This.Context
         Dim NextObject As Object
-        Set NextObject = CallByName(ctx, Tokens(0), VbGet)
+        Set NextObject = CallByName(This.Context, Tokens(0), VbGet)
         Debug.Assert Not NextObject Is Nothing
         
         Dim NextPath As String

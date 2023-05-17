@@ -10,6 +10,6 @@ Attribute VB_Exposed = False
 '@Folder MVVM.Infrastructure.Abstract
 Option Explicit
 
-Public Function CreateBinding(ByVal Source As IViewModel, ByVal SourcePropertyPath As String, _
+Public Function CreateBinding(ByVal Source As Object, ByVal SourcePropertyPath As String, _
     ByVal Target As Control, Optional ByVal TargetProperty As String) As IPropertyBinding
 End Function

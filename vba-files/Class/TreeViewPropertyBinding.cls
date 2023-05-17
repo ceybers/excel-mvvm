@@ -21,7 +21,7 @@ Attribute tv.VB_VarHelpID = -1
 
 Private Type TState
     BindingMode As BindingMode
-    ViewModel As IViewModel
+    ViewModel As Object
     SourcePropertyPath As String
     TargetProperty As String
     OneTimeBoundCounter As Long
@@ -48,7 +48,7 @@ Private Property Get IPropertyBinding_TargetProperty() As String
     IPropertyBinding_TargetProperty = This.TargetProperty
 End Property
 
-Public Sub Create(ByVal Source As IViewModel, ByVal SourcePropertyPath As String, ByVal Target As Control, Optional ByVal TargetProperty As String)
+Public Sub Create(ByVal Source As Object, ByVal SourcePropertyPath As String, ByVal Target As Control, Optional ByVal TargetProperty As String)
     If DO_DEBUG Then Debug.Print "TreeViewPropertyBinding Create(vm, "; SourcePropertyPath; ", "; Target.Name; ")"
     Set This.ViewModel = Source
     This.SourcePropertyPath = SourcePropertyPath

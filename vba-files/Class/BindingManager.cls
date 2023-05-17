@@ -36,7 +36,7 @@ Private Sub InitializeBindingStrategies()
     End With
 End Sub
 
-Public Sub BindPropertyPath(ByVal Source As IViewModel, ByVal SourcePropertyPath As String, ByVal Target As Object, Optional ByVal TargetProperty As String)
+Public Sub BindPropertyPath(ByVal Source As Object, ByVal SourcePropertyPath As String, ByVal Target As Object, Optional ByVal TargetProperty As String)
     Dim BindingStrategy As IBindingStrategy
     
     On Error GoTo NoStrategyFound

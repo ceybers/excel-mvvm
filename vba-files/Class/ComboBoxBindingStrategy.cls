@@ -11,7 +11,7 @@ Attribute VB_Exposed = False
 Option Explicit
 Implements IBindingStrategy
 
-Private Function IBindingStrategy_CreateBinding(ByVal Source As IViewModel, ByVal SourcePropertyPath As String, ByVal Target As Control, Optional ByVal TargetProperty As String) As IPropertyBinding
+Private Function IBindingStrategy_CreateBinding(ByVal Source As Object, ByVal SourcePropertyPath As String, ByVal Target As Control, Optional ByVal TargetProperty As String) As IPropertyBinding
     Dim NewBinding As ComboBoxPropertyBinding
     Set NewBinding = New ComboBoxPropertyBinding
     NewBinding.Create Source, SourcePropertyPath, Target, TargetProperty

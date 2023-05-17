@@ -52,7 +52,7 @@ Private Sub OnCancel()
     Me.Hide
 End Sub
  
-Private Function IView_ShowDialog(ByVal ViewModel As IViewModel) As Boolean
+Private Function IView_ShowDialog(ByVal ViewModel As Object) As Boolean
     Set This.ViewModel = ViewModel
     
     InitializeControls
