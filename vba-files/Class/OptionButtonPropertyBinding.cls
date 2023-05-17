@@ -17,6 +17,7 @@ Private Const DO_DEBUG As Boolean = False
 
 '@MemberAttribute VB_VarHelpID, -1
 Private WithEvents opt As MSForms.OptionButton
+Attribute opt.VB_VarHelpID = -1
 
 Private Type TState
     BindingMode As BindingMode

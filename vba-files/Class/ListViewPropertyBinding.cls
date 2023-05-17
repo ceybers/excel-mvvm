@@ -21,7 +21,7 @@ Attribute lv.VB_VarHelpID = -1
 
 Private Type TState
     BindingMode As BindingMode
-    ViewModel As SomeViewModel
+    ViewModel As IViewModel
     SourcePropertyPath As String
     TargetProperty As String
     OneTimeBoundCounter As Long
@@ -50,8 +50,12 @@ End Property
 
 Public Sub Create(ByVal Source As IViewModel, ByVal SourcePropertyPath As String, ByVal Target As Control, Optional ByVal TargetProperty As String)
     If DO_DEBUG Then Debug.Print "ListViewPropertyBinding Create(vm, "; SourcePropertyPath; ", "; Target.Name; ")"
-    Set This.ViewModel = Source
-    This.SourcePropertyPath = SourcePropertyPath
+    
+    Dim ThisBindingPath As IBindingPath
+    Set ThisBindingPath = BindingPath.Create(Source, SourcePropertyPath)
+    Set This.ViewModel = ThisBindingPath.Object 'Source
+    This.SourcePropertyPath = ThisBindingPath.PropertyName 'SourcePropertyPath
+    
     Set lv = Target
     This.TargetProperty = TargetProperty
     
@@ -109,8 +113,10 @@ Private Function CanUpdateTarget() As Boolean
 End Function
 
 Private Sub UpdateListViewSelectedItem()
+    Dim vm As FavColorViewModel
+    Set vm = This.ViewModel
     Dim vNewValue As String
-    vNewValue = CallByName(This.ViewModel, This.SourcePropertyPath, VbGet)
+    vNewValue = CallByName(vm, This.SourcePropertyPath, VbGet)
     
     Dim ListItem As ListItem
     For Each ListItem In lv.ListItems

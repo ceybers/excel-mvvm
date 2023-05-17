@@ -12,8 +12,10 @@ Option Explicit
 
 '@Description "Registers the specified handler."
 Public Sub RegisterHandler(ByVal Handler As IHandlePropertyChanged)
+Attribute RegisterHandler.VB_Description = "Registers the specified handler."
 End Sub
 
 '@Description "Notifies all registered handlers of a property value change."
 Public Sub OnPropertyChanged(ByVal Source As Object, ByVal PropertyName As String)
+Attribute OnPropertyChanged.VB_Description = "Notifies all registered handlers of a property value change."
 End Sub

@@ -85,8 +85,9 @@ Private Sub BindControls()
         .BindPropertyPath This.ViewModel, "Size", Me.cboSize, "Value"
         .BindPropertyPath This.ViewModel, "SizeOptions", Me.cboSize, "List"
         
-        .BindPropertyPath This.ViewModel, "Size", Me.lvSize, "SelectedItem"
-        .BindPropertyPath This.ViewModel, "SizeOptions", Me.lvSize, "ListItems"
+        '.BindPropertyPath This.ViewModel, "FavColorViewModel.FavoriteColors", Me.lvSize, "SelectedItem"
+        '.BindPropertyPath This.ViewModel, "FavColorViewModel.FavoriteColor", Me.lvSize, "ListItems"
+        .BindPropertyPath This.ViewModel, "FavColorViewModel.FavoriteColor", Me.lvSize, "SelectedItem"
         
         .BindPropertyPath This.ViewModel, "Size", Me.tvSize, "SelectedItem"
         .BindPropertyPath This.ViewModel, "SizeOptions", Me.tvSize, "Nodes"

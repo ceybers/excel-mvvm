@@ -17,6 +17,7 @@ Private Const DO_DEBUG As Boolean = False
 
 '@MemberAttribute VB_VarHelpID, -1
 Private WithEvents lbl As MSForms.Label
+Attribute lbl.VB_VarHelpID = -1
 
 Private Type TState
     BindingMode As BindingMode

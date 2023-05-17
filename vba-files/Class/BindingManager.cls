@@ -50,7 +50,6 @@ Public Sub BindPropertyPath(ByVal Source As IViewModel, ByVal SourcePropertyPath
     Dim SourceNotifier As INotifyPropertyChanged
     Set SourceNotifier = Source
     If Not SourceNotifier Is Nothing And TypeOf NewBinding Is IHandlePropertyChanged Then
-    Debug.Print "YYY"
         SourceNotifier.RegisterHandler NewBinding
     End If
     

@@ -17,6 +17,7 @@ Private Const DO_DEBUG As Boolean = False
 
 '@MemberAttribute VB_VarHelpID, -1
 Private WithEvents tb As MSForms.TextBox
+Attribute tb.VB_VarHelpID = -1
 
 Private Type TState
     BindingMode As BindingMode
@@ -32,7 +33,7 @@ Private Property Get IPropertyBinding_Mode() As BindingMode
 End Property
 
 Private Property Get IPropertyBinding_Source() As IViewModel
-    Set IPropertyBinding_Source = vm
+    Set IPropertyBinding_Source = This.ViewModel
 End Property
 
 Private Property Get IPropertyBinding_SourcePropertyPath() As String

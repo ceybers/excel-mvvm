@@ -17,6 +17,7 @@ Private Const DO_DEBUG As Boolean = False
 
 '@MemberAttribute VB_VarHelpID, -1
 Private WithEvents tv As MSComctlLib.TreeView
+Attribute tv.VB_VarHelpID = -1
 
 Private Type TState
     BindingMode As BindingMode
@@ -134,4 +135,3 @@ Private Sub UpdateTreeViewNodes()
         tv.Nodes.Add Key:=Key, Text:=NewList.Item(Key)
     Next Key
 End Sub
-

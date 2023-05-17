@@ -15,6 +15,7 @@ Implements INotifyPropertyChanged
 
 Private Type TState
     AppContext As AppContext
+    Handlers As Collection
     
     FirstName As String
     LastName As String
@@ -31,9 +32,13 @@ Private Type TState
     TestMsgboxCommand As ICommand
     TestDoCmdCommand As ICommand
     
-    Handlers As Collection
+    FavColorViewModel As FavColorViewModel
 End Type
 Private This As TState
+
+Public Property Get FavColorViewModel() As FavColorViewModel
+    Set FavColorViewModel = This.FavColorViewModel
+End Property
 
 Public Property Get TestDoCmdCommand() As ICommand
     Set TestDoCmdCommand = This.TestDoCmdCommand
@@ -57,6 +62,7 @@ End Property
 
 Public Property Set Context(ByVal vNewValue As IAppContext)
     Set This.AppContext = vNewValue
+    Set This.FavColorViewModel.Context = vNewValue
 End Property
 
 Public Property Get IsFoobar() As Boolean
@@ -156,6 +162,8 @@ End Property
 Private Sub Class_Initialize()
     Set This.TestMsgboxCommand = New TestMsgboxCommand
     Set This.Handlers = New Collection
+    
+    Set This.FavColorViewModel = New FavColorViewModel
 End Sub
 
 Private Function IViewModel_IsValid() As Boolean
@@ -177,7 +185,7 @@ End Sub
 Private Sub INotifyPropertyChanged_OnPropertyChanged(ByVal Source As Object, ByVal PropertyName As String)
     Dim Handler As IHandlePropertyChanged
     For Each Handler In This.Handlers
-    Handler.HandlePropertyChanged Me, PropertyName
+        Handler.HandlePropertyChanged Me, PropertyName
     Next Handler
 End Sub
 
@@ -207,6 +215,9 @@ Public Sub InitializeListViewSize(ByVal lv As ListView4)
         .LabelEdit = lvwManual
         .HideSelection = False
         .FullRowSelect = True
+        .ListItems.Add Text:="Blue"
+        .ListItems.Add Text:="Red"
+        .ListItems.Add Text:="Green"
     End With
 End Sub
 
