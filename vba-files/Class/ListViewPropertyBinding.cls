@@ -113,10 +113,8 @@ Private Function CanUpdateTarget() As Boolean
 End Function
 
 Private Sub UpdateListViewSelectedItem()
-    Dim vm As FavColorViewModel
-    Set vm = This.ViewModel
-    Dim vNewValue As String
-    vNewValue = CallByName(vm, This.SourcePropertyPath, VbGet)
+    Dim vNewValue As Variant
+    vNewValue = CallByName(This.ViewModel, This.SourcePropertyPath, VbGet)
     
     Dim ListItem As ListItem
     For Each ListItem In lv.ListItems

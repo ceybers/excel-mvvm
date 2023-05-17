@@ -215,9 +215,6 @@ Public Sub InitializeListViewSize(ByVal lv As ListView4)
         .LabelEdit = lvwManual
         .HideSelection = False
         .FullRowSelect = True
-        .ListItems.Add Text:="Blue"
-        .ListItems.Add Text:="Red"
-        .ListItems.Add Text:="Green"
     End With
 End Sub
 
