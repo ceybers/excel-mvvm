@@ -89,9 +89,9 @@ End Sub
 
 Private Sub UpdateSource()
     If mBindingMode = TwoWayBinding Or mBindingMode = OneWayToSource Then
-        Dim vnewValue As Variant
-        vnewValue = CallByName(cbo, mTargetProperty, VbGet)
-        CallByName vm, mSourcePropertyPath, VbLet, vnewValue
+        Dim vNewValue As Variant
+        vNewValue = CallByName(cbo, mTargetProperty, VbGet)
+        CallByName vm, mSourcePropertyPath, VbLet, vNewValue
     End If
 End Sub
 
@@ -102,9 +102,9 @@ Private Function CanUpdateTarget() As Boolean
 End Function
 
 Private Sub UpdateComboBoxSelected()
-    Dim vnewValue As String
-    vnewValue = CallByName(vm, mSourcePropertyPath, VbGet)
-    CallByName cbo, mTargetProperty, VbLet, vnewValue
+    Dim vNewValue As String
+    vNewValue = CallByName(vm, mSourcePropertyPath, VbGet)
+    CallByName cbo, mTargetProperty, VbLet, vNewValue
 End Sub
 
 Private Sub UpdateComboBoxList()

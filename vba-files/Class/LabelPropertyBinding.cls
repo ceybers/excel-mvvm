@@ -71,9 +71,9 @@ End Sub
 Private Sub UpdateTarget()
     If CanUpdateTarget Then
         If DO_DEBUG Then Debug.Print "LabelPropertyBinding vm_PropertyChanged()"
-        Dim vnewValue As String
-        vnewValue = CallByName(vm, mSourcePropertyPath, VbGet)
-        CallByName lbl, mTargetProperty, VbLet, vnewValue
+        Dim vNewValue As String
+        vNewValue = CallByName(vm, mSourcePropertyPath, VbGet)
+        CallByName lbl, mTargetProperty, VbLet, vNewValue
     End If
     
     If mBindingMode = OneTimeBinding Then mOneTimeBoundCounter = mOneTimeBoundCounter + 1

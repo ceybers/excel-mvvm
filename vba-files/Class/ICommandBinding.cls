@@ -11,12 +11,14 @@ Attribute VB_Exposed = False
 '@Folder "Abstractions"
 Option Explicit
 
-Public Property Get Source() As Object
+Public Property Get Context() As AppContext
 End Property
 
-Public Property Get SourcePropertyPath() As String
+Public Property Get Source() As Object ' ViewModel
 End Property
 
-Public Property Get Target() As Object
+Public Property Get Command() As ICommand ' Command
 End Property
 
+Public Property Get Target() As Object ' UserForm Control
+End Property

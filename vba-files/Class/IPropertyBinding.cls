@@ -20,13 +20,13 @@ End Enum
 Public Property Get Mode() As BindingMode
 End Property
 
-Public Property Get Source() As Object
+Public Property Get Source() As Object ' ViewModel
 End Property
 
 Public Property Get SourcePropertyPath() As String
 End Property
 
-Public Property Get Target() As Object
+Public Property Get Target() As Object ' UserForm Control
 End Property
 
 Public Property Get TargetProperty() As String

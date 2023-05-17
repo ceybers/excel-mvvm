@@ -12,7 +12,7 @@ Attribute VB_Exposed = False
 Option Explicit
 Implements IPropertyBinding
 
-Private Const DO_DEBUG As Boolean = True
+Private Const DO_DEBUG As Boolean = False
 
 Private mBindingMode As BindingMode
 '@MemberAttribute VB_VarHelpID, -1
@@ -90,9 +90,9 @@ End Sub
 Private Sub UpdateSource()
     If mBindingMode = TwoWayBinding Or mBindingMode = OneWayToSource Then
         If mTargetProperty = "SelectedItem" Then
-            Dim vnewValue As Node
-            Set vnewValue = CallByName(tv, mTargetProperty, VbGet)
-            CallByName vm, mSourcePropertyPath, VbLet, vnewValue
+            Dim vNewValue As Node
+            Set vNewValue = CallByName(tv, mTargetProperty, VbGet)
+            CallByName vm, mSourcePropertyPath, VbLet, vNewValue
         Else
             Debug.Assert False
         End If
@@ -106,12 +106,12 @@ Private Function CanUpdateTarget() As Boolean
 End Function
 
 Private Sub UpdateTreeViewSelectedItem()
-    Dim vnewValue As String
-    vnewValue = CallByName(vm, mSourcePropertyPath, VbGet)
+    Dim vNewValue As String
+    vNewValue = CallByName(vm, mSourcePropertyPath, VbGet)
     
     Dim Node As Node
     For Each Node In tv.Nodes
-        If Node.Text = vnewValue Then
+        If Node.Text = vNewValue Then
             Set tv.SelectedItem = Node
             Exit Sub
         End If

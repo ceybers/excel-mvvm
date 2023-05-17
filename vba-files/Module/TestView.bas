@@ -6,13 +6,13 @@ Public Sub TestView()
     Dim ctx As AppContext
     Set ctx = New AppContext
     
-    Dim view As IView
-    Set view = New ExampleView
+    Dim View As IView
+    Set View = New ExampleView
     
     Dim vm As IViewModel
     Set vm = GetSampleViewModel(ctx)
     
-    With view
+    With View
         If .ShowDialog(vm) Then
             'Debug.Print "OK"
         Else

@@ -74,9 +74,9 @@ End Sub
 
 Private Sub UpdateTarget()
     If CanUpdateTarget Then
-        Dim vnewValue As String
-        vnewValue = CallByName(vm, mSourcePropertyPath, VbGet)
-        CallByName opt, mTargetProperty, VbLet, vnewValue
+        Dim vNewValue As String
+        vNewValue = CallByName(vm, mSourcePropertyPath, VbGet)
+        CallByName opt, mTargetProperty, VbLet, vNewValue
     End If
     
     If mBindingMode = OneTimeBinding Then mOneTimeBoundCounter = mOneTimeBoundCounter + 1
@@ -84,9 +84,9 @@ End Sub
 
 Private Sub UpdateSource()
     If mBindingMode = TwoWayBinding Or mBindingMode = OneWayToSource Then
-        Dim vnewValue As Variant
-        vnewValue = CallByName(opt, mTargetProperty, VbGet)
-        CallByName vm, mSourcePropertyPath, VbLet, vnewValue
+        Dim vNewValue As Variant
+        vNewValue = CallByName(opt, mTargetProperty, VbGet)
+        CallByName vm, mSourcePropertyPath, VbLet, vNewValue
     End If
 End Sub
 

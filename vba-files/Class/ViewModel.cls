@@ -30,23 +30,32 @@ Private Type TState
     IsFoobarCaption As String
     
     TestMsgboxCommand As ICommand
+    TestDoCmdCommand As ICommand
 End Type
 Private This As TState
+
+Public Property Get TestDoCmdCommand() As ICommand
+    Set TestDoCmdCommand = This.TestDoCmdCommand
+End Property
+
+Public Property Set TestDoCmdCommand(ByVal vNewValue As ICommand)
+    Set This.TestDoCmdCommand = vNewValue
+End Property
 
 Public Property Get TestMsgboxCommand() As ICommand
     Set TestMsgboxCommand = This.TestMsgboxCommand
 End Property
 
-Public Property Set TestMsgboxCommand(ByVal vnewValue As ICommand)
-    Set This.TestMsgboxCommand = vnewValue
+Public Property Set TestMsgboxCommand(ByVal vNewValue As ICommand)
+    Set This.TestMsgboxCommand = vNewValue
 End Property
 
 Public Property Get Context() As AppContext
     Set Context = This.AppContext
 End Property
 
-Public Property Set Context(ByVal vnewValue As AppContext)
-    Set This.AppContext = vnewValue
+Public Property Set Context(ByVal vNewValue As AppContext)
+    Set This.AppContext = vNewValue
 End Property
 
 Public Property Get IsFoobar() As Boolean
@@ -64,8 +73,8 @@ Public Property Get IsFoobarCaption() As String
     IsFoobarCaption = This.IsFoobarCaption
 End Property
 
-Public Property Let IsFoobarCaption(ByVal vnewValue As String)
-    This.IsFoobarCaption = vnewValue
+Public Property Let IsFoobarCaption(ByVal vNewValue As String)
+    This.IsFoobarCaption = vNewValue
 End Property
 
 Public Property Get FirstName() As String
@@ -185,7 +194,7 @@ Public Sub InitializeListViewSize(ByVal lv As MSComctlLib.ListView)
         .ListItems.Clear
         .ColumnHeaders.Clear
         .ColumnHeaders.Add Text:="Value"
-        .view = lvwReport
+        .View = lvwReport
         .Gridlines = True
         .LabelEdit = lvwManual
         .HideSelection = False
@@ -202,4 +211,16 @@ Public Sub InitializeTreeViewSize(ByVal tv As MSComctlLib.TreeView)
         .SingleSel = True
         .Style = tvwTreelinesPlusMinusText
     End With
+End Sub
+
+Public Sub DoSomethingByCommand()
+    FirstName = "Something"
+End Sub
+
+Public Sub InitializeCommands()
+    Dim TestVMCmd As TestVMSubCommand
+    Set TestVMCmd = New TestVMSubCommand
+    Set TestVMCmd.Context = This.AppContext
+    Set TestVMCmd.ViewModel = Me
+    Set This.TestDoCmdCommand = TestVMCmd
 End Sub

@@ -99,7 +99,18 @@ Private Sub BindControls()
 End Sub
 
 Private Sub BindCommands()
+    Dim SomeViewCommand As TestViewCommand
+    Set SomeViewCommand = New TestViewCommand
+    Set SomeViewCommand.Context = vm.Context
+    Set SomeViewCommand.View = Me
+    
     With vm.Context.CommandManager
-        .BindCommand vm, "TestMsgboxCommand", Me.cmbTestMsgbox
+        .BindCommand2 vm.Context, vm, vm.TestMsgboxCommand, Me.cmbTestMsgbox
+        .BindCommand2 vm.Context, vm, vm.TestDoCmdCommand, Me.cmdDoVMCmd
+        .BindCommand2 vm.Context, vm, SomeViewCommand, Me.cmdDoVCmd
     End With
+End Sub
+
+Public Sub DoSomething()
+    MsgBox "ExampleView.DoSomething()"
 End Sub

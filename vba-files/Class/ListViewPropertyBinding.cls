@@ -90,9 +90,9 @@ End Sub
 Private Sub UpdateSource()
     If mBindingMode = TwoWayBinding Or mBindingMode = OneWayToSource Then
         If mTargetProperty = "SelectedItem" Then
-            Dim vnewValue As Variant
-            vnewValue = CallByName(lv, mTargetProperty, VbGet)
-            CallByName vm, mSourcePropertyPath, VbLet, vnewValue
+            Dim vNewValue As Variant
+            vNewValue = CallByName(lv, mTargetProperty, VbGet)
+            CallByName vm, mSourcePropertyPath, VbLet, vNewValue
         Else
             Debug.Assert False
         End If
@@ -106,12 +106,12 @@ Private Function CanUpdateTarget() As Boolean
 End Function
 
 Private Sub UpdateListViewSelectedItem()
-    Dim vnewValue As String
-    vnewValue = CallByName(vm, mSourcePropertyPath, VbGet)
+    Dim vNewValue As String
+    vNewValue = CallByName(vm, mSourcePropertyPath, VbGet)
     
     Dim ListItem As ListItem
     For Each ListItem In lv.ListItems
-        If ListItem.Text = vnewValue Then
+        If ListItem.Text = vNewValue Then
             Set lv.SelectedItem = ListItem
             Exit Sub
         End If
