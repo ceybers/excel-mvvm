@@ -11,22 +11,24 @@ Attribute VB_Exposed = False
 '@Folder "PropertyBindings"
 Option Explicit
 Implements IPropertyBinding
+Implements IHandlePropertyChanged
 
 Private Const DO_DEBUG As Boolean = False
 
-Private mBindingMode As BindingMode
-'@MemberAttribute VB_VarHelpID, -1
-Private WithEvents vm As SomeViewModel
-Attribute vm.VB_VarHelpID = -1
-Private mSourcePropertyPath As String
 '@MemberAttribute VB_VarHelpID, -1
 Private WithEvents opt As MSForms.OptionButton
-Attribute opt.VB_VarHelpID = -1
-Private mTargetProperty As String
-Private mOneTimeBoundCounter As Long
+
+Private Type TState
+    BindingMode As BindingMode
+    ViewModel As SomeViewModel
+    SourcePropertyPath As String
+    TargetProperty As String
+    OneTimeBoundCounter As Long
+End Type
+Private This As TState
 
 Private Property Get IPropertyBinding_Mode() As BindingMode
-    IPropertyBinding_Mode = mBindingMode
+    IPropertyBinding_Mode = This.BindingMode
 End Property
 
 Private Property Get IPropertyBinding_Source() As IViewModel
@@ -34,7 +36,7 @@ Private Property Get IPropertyBinding_Source() As IViewModel
 End Property
 
 Private Property Get IPropertyBinding_SourcePropertyPath() As String
-    IPropertyBinding_SourcePropertyPath = mSourcePropertyPath
+    IPropertyBinding_SourcePropertyPath = This.SourcePropertyPath
 End Property
 
 Private Property Get IPropertyBinding_Target() As Object
@@ -42,20 +44,20 @@ Private Property Get IPropertyBinding_Target() As Object
 End Property
 
 Private Property Get IPropertyBinding_TargetProperty() As String
-    IPropertyBinding_TargetProperty = mTargetProperty
+    IPropertyBinding_TargetProperty = This.TargetProperty
 End Property
 
 Public Sub Create(ByVal Source As IViewModel, ByVal SourcePropertyPath As String, ByVal Target As Control, Optional ByVal TargetProperty As String)
     If DO_DEBUG Then Debug.Print "OptionButtonPropertyBinding Create(vm, "; SourcePropertyPath; ", "; Target.Name; ")"
-    Set vm = Source
-    mSourcePropertyPath = SourcePropertyPath
+    Set This.ViewModel = Source
+    This.SourcePropertyPath = SourcePropertyPath
     Set opt = Target
-    mTargetProperty = TargetProperty
+    This.TargetProperty = TargetProperty
     
     If TargetProperty = "Value" Then
-        mBindingMode = TwoWayBinding
+        This.BindingMode = TwoWayBinding
     Else
-        mBindingMode = OneWayBinding
+        This.BindingMode = OneWayBinding
     End If
     
     UpdateTarget
@@ -66,8 +68,8 @@ Private Sub opt_Change()
     UpdateSource
 End Sub
 
-Private Sub vm_PropertyChanged(ByVal PropertyName As String)
-    If PropertyName <> mSourcePropertyPath Then Exit Sub
+Private Sub IHandlePropertyChanged_HandlePropertyChanged(ByVal Source As Object, ByVal PropertyName As String)
+    If PropertyName <> This.SourcePropertyPath Then Exit Sub
     If DO_DEBUG Then Debug.Print "OptionButtonPropertyBinding vm_PropertyChanged()"
     UpdateTarget
 End Sub
@@ -75,23 +77,23 @@ End Sub
 Private Sub UpdateTarget()
     If CanUpdateTarget Then
         Dim vNewValue As String
-        vNewValue = CallByName(vm, mSourcePropertyPath, VbGet)
-        CallByName opt, mTargetProperty, VbLet, vNewValue
+        vNewValue = CallByName(This.ViewModel, This.SourcePropertyPath, VbGet)
+        CallByName opt, This.TargetProperty, VbLet, vNewValue
     End If
     
-    If mBindingMode = OneTimeBinding Then mOneTimeBoundCounter = mOneTimeBoundCounter + 1
+    If This.BindingMode = OneTimeBinding Then This.OneTimeBoundCounter = This.OneTimeBoundCounter + 1
 End Sub
 
 Private Sub UpdateSource()
-    If mBindingMode = TwoWayBinding Or mBindingMode = OneWayToSource Then
+    If This.BindingMode = TwoWayBinding Or This.BindingMode = OneWayToSource Then
         Dim vNewValue As Variant
-        vNewValue = CallByName(opt, mTargetProperty, VbGet)
-        CallByName vm, mSourcePropertyPath, VbLet, vNewValue
+        vNewValue = CallByName(opt, This.TargetProperty, VbGet)
+        CallByName This.ViewModel, This.SourcePropertyPath, VbLet, vNewValue
     End If
 End Sub
 
 Private Function CanUpdateTarget() As Boolean
-    If mBindingMode = TwoWayBinding Then CanUpdateTarget = True
-    If mBindingMode = OneWayBinding Then CanUpdateTarget = True
-    If mBindingMode = OneTimeBinding And mOneTimeBoundCounter = 0 Then CanUpdateTarget = True
+    If This.BindingMode = TwoWayBinding Then CanUpdateTarget = True
+    If This.BindingMode = OneWayBinding Then CanUpdateTarget = True
+    If This.BindingMode = OneTimeBinding And This.OneTimeBoundCounter = 0 Then CanUpdateTarget = True
 End Function

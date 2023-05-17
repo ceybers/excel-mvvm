@@ -19,7 +19,7 @@ Private Sub Class_Initialize()
     Set This.Commands = New Collection
 End Sub
 
-Public Sub BindCommand2(ByVal Context As IAppContext, ByVal ViewModel As IViewModel, ByVal Command As ICommand, ByVal Control As Object)
+Public Sub BindCommand(ByVal Context As IAppContext, ByVal ViewModel As IViewModel, ByVal Command As ICommand, ByVal Control As Object)
     Dim NewBinding As CommandBinding
     Set NewBinding = New CommandBinding
     NewBinding.Create Context, ViewModel, Command, Control

@@ -2,7 +2,7 @@ VERSION 1.0 CLASS
 BEGIN
   MultiUse = -1  'True
 END
-Attribute VB_Name = "CommandButtonPropertyBinding"
+Attribute VB_Name = "TreeViewPropertyBinding"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
@@ -16,8 +16,7 @@ Implements IHandlePropertyChanged
 Private Const DO_DEBUG As Boolean = False
 
 '@MemberAttribute VB_VarHelpID, -1
-Private WithEvents cmb As MSForms.CommandButton
-Attribute cmb.VB_VarHelpID = -1
+Private WithEvents tv As MSComctlLib.TreeView
 
 Private Type TState
     BindingMode As BindingMode
@@ -41,7 +40,7 @@ Private Property Get IPropertyBinding_SourcePropertyPath() As String
 End Property
 
 Private Property Get IPropertyBinding_Target() As Object
-    Set IPropertyBinding_Target = cmb
+    Set IPropertyBinding_Target = tv
 End Property
 
 Private Property Get IPropertyBinding_TargetProperty() As String
@@ -49,47 +48,90 @@ Private Property Get IPropertyBinding_TargetProperty() As String
 End Property
 
 Public Sub Create(ByVal Source As IViewModel, ByVal SourcePropertyPath As String, ByVal Target As Control, Optional ByVal TargetProperty As String)
-    If DO_DEBUG Then Debug.Print "CommandButtonPropertyBinding Create(vm, "; SourcePropertyPath; ", "; Target.Name; ")"
+    If DO_DEBUG Then Debug.Print "TreeViewPropertyBinding Create(vm, "; SourcePropertyPath; ", "; Target.Name; ")"
     Set This.ViewModel = Source
     This.SourcePropertyPath = SourcePropertyPath
-    Set cmb = Target
+    Set tv = Target
     This.TargetProperty = TargetProperty
     
-    This.BindingMode = OneWayBinding
-        
+    If TargetProperty = "SelectedItem" Then
+        This.BindingMode = TwoWayBinding
+    Else
+        This.BindingMode = OneWayBinding
+    End If
+    
     UpdateTarget
 End Sub
 
-'Private Sub lbl_Click()
-'    If DO_DEBUG Then Debug.Print "TextBoxPropertyBinding lbl_Click()"
-    'UpdateSource
-'End Sub
+Private Sub tv_NodeClick(ByVal Node As MSComctlLib.Node)
+    If DO_DEBUG Then Debug.Print "TreeViewPropertyBinding tv_NodeClick()"
+    UpdateSource
+End Sub
+
 Private Sub IHandlePropertyChanged_HandlePropertyChanged(ByVal Source As Object, ByVal PropertyName As String)
     If PropertyName <> This.SourcePropertyPath Then Exit Sub
-    If DO_DEBUG Then Debug.Print "CommandButtonPropertyBinding vm_PropertyChanged()"
+    If DO_DEBUG Then Debug.Print "TreeViewPropertyBinding vm_PropertyChanged()"
     UpdateTarget
 End Sub
 
 Private Sub UpdateTarget()
     If CanUpdateTarget Then
-        If DO_DEBUG Then Debug.Print "CommandButtonPropertyBinding cmb_PropertyChanged()"
-        Dim vNewValue As String
-        vNewValue = CallByName(This.ViewModel, This.SourcePropertyPath, VbGet)
-        CallByName cmb, This.TargetProperty, VbLet, vNewValue
+        If This.TargetProperty = "SelectedItem" Then
+            UpdateTreeViewSelectedItem
+        ElseIf This.TargetProperty = "Nodes" Then
+            UpdateTreeViewNodes
+        Else
+            Debug.Print "Not yet implemented"
+            Debug.Assert False
+        End If
     End If
     
     If This.BindingMode = OneTimeBinding Then This.OneTimeBoundCounter = This.OneTimeBoundCounter + 1
 End Sub
 
-'Private Sub UpdateSource()
-'    If This.BindingMode = TwoWayBinding Or This.BindingMode = OneWayToSource Then
-    ' NOOP
-'    End If
-'End Sub
+Private Sub UpdateSource()
+    If This.BindingMode = TwoWayBinding Or This.BindingMode = OneWayToSource Then
+        If This.TargetProperty = "SelectedItem" Then
+            Dim SelectedNode As Node
+            Set SelectedNode = CallByName(tv, This.TargetProperty, VbGet)
+            Debug.Assert Not SelectedNode Is Nothing
+            CallByName This.ViewModel, This.SourcePropertyPath, VbLet, SelectedNode.Text
+        Else
+            Debug.Assert False
+        End If
+    End If
+End Sub
 
 Private Function CanUpdateTarget() As Boolean
     If This.BindingMode = TwoWayBinding Then CanUpdateTarget = True
     If This.BindingMode = OneWayBinding Then CanUpdateTarget = True
     If This.BindingMode = OneTimeBinding And This.OneTimeBoundCounter = 0 Then CanUpdateTarget = True
 End Function
+
+Private Sub UpdateTreeViewSelectedItem()
+    Dim vNewValue As String
+    vNewValue = CallByName(This.ViewModel, This.SourcePropertyPath, VbGet)
+    
+    Dim Node As Node
+    For Each Node In tv.Nodes
+        If Node.Text = vNewValue Then
+            Set tv.SelectedItem = Node
+            Exit Sub
+        End If
+    Next Node
+End Sub
+
+Private Sub UpdateTreeViewNodes()
+    If DO_DEBUG Then Debug.Print "TreeViewPropertyBinding UpdateTreeViewNodes()"
+    
+    tv.Nodes.Clear
+    
+    Dim NewList As Scripting.Dictionary
+    Set NewList = CallByName(This.ViewModel, This.SourcePropertyPath, VbGet)
+    
+    Dim Key As Variant
+    For Each Key In NewList.Keys
+        tv.Nodes.Add Key:=Key, Text:=NewList.Item(Key)
+    Next Key
+End Sub
 

@@ -17,22 +17,18 @@ Attribute VB_Exposed = False
 Option Explicit
 Implements IView
  
- ' TODO vm doesn't need WithEvents in the View
-'@MemberAttribute VB_VarHelpID, -1
-Private WithEvents vm As SomeViewModel ' Needs to be the specific type, so we can access .InitializeListViewSize() etc.
-Attribute vm.VB_VarHelpID = -1
 Private Type TView
     IsCancelled As Boolean
-    'ViewModel As IViewModel
+    ViewModel As SomeViewModel
 End Type
 Private This As TView
 
 Private Sub cmbTest_Click()
-    vm.DebugPrint
+    This.ViewModel.DebugPrint
 End Sub
 
 Private Sub cmdSetNameToBob_Click()
-    vm.FirstName = "Bob"
+    This.ViewModel.FirstName = "Bob"
 End Sub
 
 Private Sub OkButton_Click()
@@ -56,7 +52,7 @@ Private Sub OnCancel()
 End Sub
  
 Private Function IView_ShowDialog(ByVal ViewModel As IViewModel) As Boolean
-    Set vm = ViewModel
+    Set This.ViewModel = ViewModel
     
     InitializeControls
     BindControls
@@ -69,46 +65,46 @@ End Function
 
 Private Sub InitializeControls()
     '@Ignore ArgumentWithIncompatibleObjectType
-    vm.InitializeListViewSize Me.lvSize
+    This.ViewModel.InitializeListViewSize Me.lvSize
     '@Ignore ArgumentWithIncompatibleObjectType
-    vm.InitializeTreeViewSize Me.tvSize
+    This.ViewModel.InitializeTreeViewSize Me.tvSize
 End Sub
 
 Private Sub BindControls()
-    With vm.Context.BindingManager
-        .BindPropertyPath vm, "FirstName", Me.txtFirstname, "Value"
+    With This.ViewModel.Context.BindingManager
+        .BindPropertyPath This.ViewModel, "FirstName", Me.txtFirstname, "Value"
         
-        .BindPropertyPath vm, "LastName", Me.lblFirstName, "Caption"
+        .BindPropertyPath This.ViewModel, "LastName", Me.lblFirstName, "Caption"
         
-        .BindPropertyPath vm, "IsFoobar", Me.chkIsFoobar, "Value"
-        .BindPropertyPath vm, "IsFoobarCaption", Me.chkIsFoobar, "Caption"
+        .BindPropertyPath This.ViewModel, "IsFoobar", Me.chkIsFoobar, "Value"
+        .BindPropertyPath This.ViewModel, "IsFoobarCaption", Me.chkIsFoobar, "Caption"
         
-        .BindPropertyPath vm, "IsFoobar", Me.optIsFooBar, "Value"
-        .BindPropertyPath vm, "IsFoobarCaption", Me.optIsFooBar, "Caption"
+        .BindPropertyPath This.ViewModel, "IsFoobar", Me.optIsFooBar, "Value"
+        .BindPropertyPath This.ViewModel, "IsFoobarCaption", Me.optIsFooBar, "Caption"
         
-        .BindPropertyPath vm, "Size", Me.cboSize, "Value"
-        .BindPropertyPath vm, "SizeOptions", Me.cboSize, "List"
+        .BindPropertyPath This.ViewModel, "Size", Me.cboSize, "Value"
+        .BindPropertyPath This.ViewModel, "SizeOptions", Me.cboSize, "List"
         
-        .BindPropertyPath vm, "Size", Me.lvSize, "SelectedItem"
-        .BindPropertyPath vm, "SizeOptions", Me.lvSize, "ListItems"
+        .BindPropertyPath This.ViewModel, "Size", Me.lvSize, "SelectedItem"
+        .BindPropertyPath This.ViewModel, "SizeOptions", Me.lvSize, "ListItems"
         
-        .BindPropertyPath vm, "Size", Me.tvSize, "SelectedItem"
-        .BindPropertyPath vm, "SizeOptions", Me.tvSize, "Nodes"
+        .BindPropertyPath This.ViewModel, "Size", Me.tvSize, "SelectedItem"
+        .BindPropertyPath This.ViewModel, "SizeOptions", Me.tvSize, "Nodes"
         
-        .BindPropertyPath vm, "FirstName", Me.cmbTestMsgbox, "Caption"
+        .BindPropertyPath This.ViewModel, "FirstName", Me.cmbTestMsgbox, "Caption"
     End With
 End Sub
 
 Private Sub BindCommands()
     Dim SomeViewCommand As TestViewCommand
     Set SomeViewCommand = New TestViewCommand
-    Set SomeViewCommand.Context = vm.Context
+    Set SomeViewCommand.Context = This.ViewModel.Context
     Set SomeViewCommand.View = Me
     
-    With vm.Context.CommandManager
-        .BindCommand2 vm.Context, vm, vm.TestMsgboxCommand, Me.cmbTestMsgbox
-        .BindCommand2 vm.Context, vm, vm.TestDoCmdCommand, Me.cmdDoVMCmd
-        .BindCommand2 vm.Context, vm, SomeViewCommand, Me.cmdDoVCmd
+    With This.ViewModel.Context.CommandManager
+        .BindCommand This.ViewModel.Context, This.ViewModel, This.ViewModel.TestMsgboxCommand, Me.cmbTestMsgbox
+        .BindCommand This.ViewModel.Context, This.ViewModel, This.ViewModel.TestDoCmdCommand, Me.cmdDoVMCmd
+        .BindCommand This.ViewModel.Context, This.ViewModel, SomeViewCommand, Me.cmdDoVCmd
     End With
 End Sub
 

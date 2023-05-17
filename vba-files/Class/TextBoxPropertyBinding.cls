@@ -2,7 +2,7 @@ VERSION 1.0 CLASS
 BEGIN
   MultiUse = -1  'True
 END
-Attribute VB_Name = "CommandButtonPropertyBinding"
+Attribute VB_Name = "TextBoxPropertyBinding"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
@@ -16,8 +16,7 @@ Implements IHandlePropertyChanged
 Private Const DO_DEBUG As Boolean = False
 
 '@MemberAttribute VB_VarHelpID, -1
-Private WithEvents cmb As MSForms.CommandButton
-Attribute cmb.VB_VarHelpID = -1
+Private WithEvents tb As MSForms.TextBox
 
 Private Type TState
     BindingMode As BindingMode
@@ -41,7 +40,7 @@ Private Property Get IPropertyBinding_SourcePropertyPath() As String
 End Property
 
 Private Property Get IPropertyBinding_Target() As Object
-    Set IPropertyBinding_Target = cmb
+    Set IPropertyBinding_Target = tb
 End Property
 
 Private Property Get IPropertyBinding_TargetProperty() As String
@@ -49,47 +48,52 @@ Private Property Get IPropertyBinding_TargetProperty() As String
 End Property
 
 Public Sub Create(ByVal Source As IViewModel, ByVal SourcePropertyPath As String, ByVal Target As Control, Optional ByVal TargetProperty As String)
-    If DO_DEBUG Then Debug.Print "CommandButtonPropertyBinding Create(vm, "; SourcePropertyPath; ", "; Target.Name; ")"
+    If DO_DEBUG Then Debug.Print "TextBoxPropertyBinding Create(vm, "; SourcePropertyPath; ", "; Target.Name; ")"
     Set This.ViewModel = Source
     This.SourcePropertyPath = SourcePropertyPath
-    Set cmb = Target
+    Set tb = Target
     This.TargetProperty = TargetProperty
     
-    This.BindingMode = OneWayBinding
-        
+    If TargetProperty = "Value" Then
+        This.BindingMode = TwoWayBinding
+    Else
+        This.BindingMode = OneWayBinding
+    End If
+    
     UpdateTarget
 End Sub
 
-'Private Sub lbl_Click()
-'    If DO_DEBUG Then Debug.Print "TextBoxPropertyBinding lbl_Click()"
-    'UpdateSource
-'End Sub
+Private Sub tb_Change()
+    If DO_DEBUG Then Debug.Print "TextBoxPropertyBinding tb_Change()"
+    UpdateSource
+End Sub
+
 Private Sub IHandlePropertyChanged_HandlePropertyChanged(ByVal Source As Object, ByVal PropertyName As String)
     If PropertyName <> This.SourcePropertyPath Then Exit Sub
-    If DO_DEBUG Then Debug.Print "CommandButtonPropertyBinding vm_PropertyChanged()"
+    If DO_DEBUG Then Debug.Print "TextBoxPropertyBinding vm_PropertyChanged()"
     UpdateTarget
 End Sub
 
 Private Sub UpdateTarget()
     If CanUpdateTarget Then
-        If DO_DEBUG Then Debug.Print "CommandButtonPropertyBinding cmb_PropertyChanged()"
         Dim vNewValue As String
         vNewValue = CallByName(This.ViewModel, This.SourcePropertyPath, VbGet)
-        CallByName cmb, This.TargetProperty, VbLet, vNewValue
+        CallByName tb, This.TargetProperty, VbLet, vNewValue
     End If
     
     If This.BindingMode = OneTimeBinding Then This.OneTimeBoundCounter = This.OneTimeBoundCounter + 1
 End Sub
 
-'Private Sub UpdateSource()
-'    If This.BindingMode = TwoWayBinding Or This.BindingMode = OneWayToSource Then
-    ' NOOP
-'    End If
-'End Sub
+Private Sub UpdateSource()
+    If This.BindingMode = TwoWayBinding Or This.BindingMode = OneWayToSource Then
+        Dim vNewValue As String
+        vNewValue = CallByName(tb, This.TargetProperty, VbGet)
+        CallByName This.ViewModel, This.SourcePropertyPath, VbLet, vNewValue
+    End If
+End Sub
 
 Private Function CanUpdateTarget() As Boolean
     If This.BindingMode = TwoWayBinding Then CanUpdateTarget = True
     If This.BindingMode = OneWayBinding Then CanUpdateTarget = True
     If This.BindingMode = OneTimeBinding And This.OneTimeBoundCounter = 0 Then CanUpdateTarget = True
 End Function
-

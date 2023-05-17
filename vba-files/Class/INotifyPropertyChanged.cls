@@ -10,5 +10,10 @@ Attribute VB_Exposed = False
 '@Folder "Abstractions"
 Option Explicit
 
-Public Sub OnPropertyChanged(ByVal PropertyName As String)
+'@Description "Registers the specified handler."
+Public Sub RegisterHandler(ByVal Handler As IHandlePropertyChanged)
+End Sub
+
+'@Description "Notifies all registered handlers of a property value change."
+Public Sub OnPropertyChanged(ByVal Source As Object, ByVal PropertyName As String)
 End Sub
