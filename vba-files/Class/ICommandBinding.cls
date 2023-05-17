@@ -2,16 +2,21 @@ VERSION 1.0 CLASS
 BEGIN
   MultiUse = -1  'True
 END
-Attribute VB_Name = "IViewModel"
+Attribute VB_Name = "ICommandBinding"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
+'@Interface
 '@Folder "Abstractions"
 Option Explicit
 
-Public Function IsValid() As Boolean
-End Function
+Public Property Get Source() As Object
+End Property
 
-Public Function Self() As IViewModel
-End Function
+Public Property Get SourcePropertyPath() As String
+End Property
+
+Public Property Get Target() As Object
+End Property
+

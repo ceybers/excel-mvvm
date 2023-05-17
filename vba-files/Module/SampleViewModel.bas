@@ -21,7 +21,9 @@ Public Function GetSampleViewModel(ByVal Context As AppContext) As ViewModel
         .IsFoobar = False
         .IsFoobarCaption = "Is Foo Bar Caption"
         Set GetSampleViewModel = .Self
+        Set .TestMsgboxCommand = New TestMsgboxCommand
     End With
+    
 End Function
 
 Public Sub TestViewModel()

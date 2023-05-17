@@ -8,7 +8,7 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 '@IgnoreModule SetAssignmentWithIncompatibleObjectType
-'@Folder("Bindings")
+'@Folder "PropertyBindings"
 Option Explicit
 Implements IPropertyBinding
 
@@ -23,6 +23,7 @@ Private mSourcePropertyPath As String
 Private WithEvents lbl As MSForms.Label
 Attribute lbl.VB_VarHelpID = -1
 Private mTargetProperty As String
+Private mOneTimeBoundCounter As Long
 
 Private Property Get IPropertyBinding_Mode() As BindingMode
     IPropertyBinding_Mode = mBindingMode
@@ -68,12 +69,14 @@ Private Sub vm_PropertyChanged(ByVal PropertyName As String)
 End Sub
 
 Private Sub UpdateTarget()
-    If mBindingMode = TwoWayBinding Or mBindingMode = OneWayBinding Then
+    If CanUpdateTarget Then
         If DO_DEBUG Then Debug.Print "LabelPropertyBinding vm_PropertyChanged()"
-        Dim vNewValue As String
-        vNewValue = CallByName(vm, mSourcePropertyPath, VbGet)
-        CallByName lbl, mTargetProperty, VbLet, vNewValue
+        Dim vnewValue As String
+        vnewValue = CallByName(vm, mSourcePropertyPath, VbGet)
+        CallByName lbl, mTargetProperty, VbLet, vnewValue
     End If
+    
+    If mBindingMode = OneTimeBinding Then mOneTimeBoundCounter = mOneTimeBoundCounter + 1
 End Sub
 
 'Private Sub UpdateSource()
@@ -81,3 +84,9 @@ End Sub
     ' NOOP
 '    End If
 'End Sub
+
+Private Function CanUpdateTarget() As Boolean
+    If mBindingMode = TwoWayBinding Then CanUpdateTarget = True
+    If mBindingMode = OneWayBinding Then CanUpdateTarget = True
+    If mBindingMode = OneTimeBinding And mOneTimeBoundCounter = 0 Then CanUpdateTarget = True
+End Function

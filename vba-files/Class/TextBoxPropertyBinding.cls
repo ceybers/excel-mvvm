@@ -8,7 +8,7 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 '@IgnoreModule SetAssignmentWithIncompatibleObjectType
-'@Folder("Bindings")
+'@Folder "PropertyBindings"
 Option Explicit
 Implements IPropertyBinding
 
@@ -23,6 +23,7 @@ Private mSourcePropertyPath As String
 Private WithEvents tb As MSForms.TextBox
 Attribute tb.VB_VarHelpID = -1
 Private mTargetProperty As String
+Private mOneTimeBoundCounter As Long
 
 Private Property Get IPropertyBinding_Mode() As BindingMode
     IPropertyBinding_Mode = mBindingMode
@@ -72,17 +73,25 @@ Private Sub vm_PropertyChanged(ByVal PropertyName As String)
 End Sub
 
 Private Sub UpdateTarget()
-    If mBindingMode = TwoWayBinding Or mBindingMode = OneWayBinding Then
-        Dim vNewValue As String
-        vNewValue = CallByName(vm, mSourcePropertyPath, VbGet)
-        CallByName tb, mTargetProperty, VbLet, vNewValue
+    If CanUpdateTarget Then
+        Dim vnewValue As String
+        vnewValue = CallByName(vm, mSourcePropertyPath, VbGet)
+        CallByName tb, mTargetProperty, VbLet, vnewValue
     End If
+    
+    If mBindingMode = OneTimeBinding Then mOneTimeBoundCounter = mOneTimeBoundCounter + 1
 End Sub
 
 Private Sub UpdateSource()
     If mBindingMode = TwoWayBinding Or mBindingMode = OneWayToSource Then
-        Dim vNewValue As String
-        vNewValue = CallByName(tb, mTargetProperty, VbGet)
-        CallByName vm, mSourcePropertyPath, VbLet, vNewValue
+        Dim vnewValue As String
+        vnewValue = CallByName(tb, mTargetProperty, VbGet)
+        CallByName vm, mSourcePropertyPath, VbLet, vnewValue
     End If
 End Sub
+
+Private Function CanUpdateTarget() As Boolean
+    If mBindingMode = TwoWayBinding Then CanUpdateTarget = True
+    If mBindingMode = OneWayBinding Then CanUpdateTarget = True
+    If mBindingMode = OneTimeBinding And mOneTimeBoundCounter = 0 Then CanUpdateTarget = True
+End Function

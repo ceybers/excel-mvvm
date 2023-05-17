@@ -12,7 +12,7 @@ Option Explicit
 Implements IViewModel
 Implements INotifyPropertyChanged
 
-Event PropertyChanged(ByVal PropertyName As String)
+Public Event PropertyChanged(ByVal PropertyName As String)
 
 Private Type TState
     AppContext As AppContext
@@ -28,15 +28,25 @@ Private Type TState
     
     IsFoobar As Boolean
     IsFoobarCaption As String
+    
+    TestMsgboxCommand As ICommand
 End Type
 Private This As TState
+
+Public Property Get TestMsgboxCommand() As ICommand
+    Set TestMsgboxCommand = This.TestMsgboxCommand
+End Property
+
+Public Property Set TestMsgboxCommand(ByVal vnewValue As ICommand)
+    Set This.TestMsgboxCommand = vnewValue
+End Property
 
 Public Property Get Context() As AppContext
     Set Context = This.AppContext
 End Property
 
-Public Property Set Context(ByVal vNewValue As AppContext)
-    Set This.AppContext = vNewValue
+Public Property Set Context(ByVal vnewValue As AppContext)
+    Set This.AppContext = vnewValue
 End Property
 
 Public Property Get IsFoobar() As Boolean
@@ -54,8 +64,8 @@ Public Property Get IsFoobarCaption() As String
     IsFoobarCaption = This.IsFoobarCaption
 End Property
 
-Public Property Let IsFoobarCaption(ByVal vNewValue As String)
-    This.IsFoobarCaption = vNewValue
+Public Property Let IsFoobarCaption(ByVal vnewValue As String)
+    This.IsFoobarCaption = vnewValue
 End Property
 
 Public Property Get FirstName() As String
@@ -134,6 +144,10 @@ Public Property Let Bar(ByVal RHS As Double)
     End If
 End Property
 
+Private Sub class_initialize()
+    Set This.TestMsgboxCommand = New TestMsgboxCommand
+End Sub
+
 Private Function IViewModel_IsValid() As Boolean
     IViewModel_IsValid = True
 End Function
@@ -176,5 +190,16 @@ Public Sub InitializeListViewSize(ByVal lv As MSComctlLib.ListView)
         .LabelEdit = lvwManual
         .HideSelection = False
         .FullRowSelect = True
+    End With
+End Sub
+
+Public Sub InitializeTreeViewSize(ByVal tv As MSComctlLib.TreeView)
+    With tv
+        .Appearance = cc3D
+        .BorderStyle = ccNone
+        .FullRowSelect = True
+        .HideSelection = False
+        .SingleSel = True
+        .Style = tvwTreelinesPlusMinusText
     End With
 End Sub

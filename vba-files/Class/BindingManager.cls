@@ -16,7 +16,7 @@ Private Type TBindingManager
 End Type
 Private This As TBindingManager
 
-Private Sub Class_Initialize()
+Private Sub class_initialize()
     Set This.PropertyBindings = New Collection
     Set This.BindingStrategies = New Scripting.Dictionary
     InitializeBindingStrategies
@@ -30,6 +30,8 @@ Private Sub InitializeBindingStrategies()
         .Add Item:=New OptionButtonBindingStrategy, Key:="MSForms.OptionButton"
         .Add Item:=New ComboBoxBindingStrategy, Key:="MSForms.ComboBox"
         .Add Item:=New ListViewBindingStrategy, Key:="MSComctlLib.ListView"
+        .Add Item:=New TreeViewBindingStrategy, Key:="MSComctlLib.TreeView"
+        .Add Item:=New CommandButtonBindingStrategy, Key:="MSForms.CommandButton"
     End With
 End Sub
 
@@ -55,6 +57,8 @@ Private Function GetFullTypeName(ByVal Target As Control) As String
     Select Case GetFullTypeName
         Case "ListView4":
             GetFullTypeName = "MSComctlLib.ListView"
+        Case "TreeView4":
+            GetFullTypeName = "MSComctlLib.TreeView"
         Case Else:
             If TypeOf Target Is MSForms.Control Then
                 GetFullTypeName = "MSForms." & GetFullTypeName

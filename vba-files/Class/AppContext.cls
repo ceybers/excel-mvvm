@@ -12,6 +12,7 @@ Option Explicit
 
 Private Type TAppContext
     BindingManager As BindingManager
+    CommandManager As CommandManager
 End Type
 Private This As TAppContext
 
@@ -19,6 +20,11 @@ Public Property Get BindingManager() As BindingManager
     Set BindingManager = This.BindingManager
 End Property
 
-Private Sub Class_Initialize()
+Public Property Get CommandManager() As CommandManager
+    Set CommandManager = This.CommandManager
+End Property
+
+Private Sub class_initialize()
     Set This.BindingManager = New BindingManager
+    Set This.CommandManager = New CommandManager
 End Sub

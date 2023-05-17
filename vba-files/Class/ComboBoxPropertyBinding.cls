@@ -8,7 +8,7 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 '@IgnoreModule SetAssignmentWithIncompatibleObjectType
-'@Folder("Bindings")
+'@Folder "PropertyBindings"
 Option Explicit
 Implements IPropertyBinding
 
@@ -23,6 +23,7 @@ Private mSourcePropertyPath As String
 Private WithEvents cbo As MSForms.ComboBox
 Attribute cbo.VB_VarHelpID = -1
 Private mTargetProperty As String
+Private mOneTimeBoundCounter As Long
 
 Private Property Get IPropertyBinding_Mode() As BindingMode
     IPropertyBinding_Mode = mBindingMode
@@ -72,11 +73,9 @@ Private Sub vm_PropertyChanged(ByVal PropertyName As String)
 End Sub
 
 Private Sub UpdateTarget()
-    If mBindingMode = TwoWayBinding Or mBindingMode = OneWayBinding Then
+    If CanUpdateTarget Then
         If mTargetProperty = "Value" Then
-            Dim vNewValue As String
-            vNewValue = CallByName(vm, mSourcePropertyPath, VbGet)
-            CallByName cbo, mTargetProperty, VbLet, vNewValue
+            UpdateComboBoxSelected
         ElseIf mTargetProperty = "List" Then
             UpdateComboBoxList
         Else
@@ -84,6 +83,28 @@ Private Sub UpdateTarget()
             Debug.Assert False
         End If
     End If
+    
+    If mBindingMode = OneTimeBinding Then mOneTimeBoundCounter = mOneTimeBoundCounter + 1
+End Sub
+
+Private Sub UpdateSource()
+    If mBindingMode = TwoWayBinding Or mBindingMode = OneWayToSource Then
+        Dim vnewValue As Variant
+        vnewValue = CallByName(cbo, mTargetProperty, VbGet)
+        CallByName vm, mSourcePropertyPath, VbLet, vnewValue
+    End If
+End Sub
+
+Private Function CanUpdateTarget() As Boolean
+    If mBindingMode = TwoWayBinding Then CanUpdateTarget = True
+    If mBindingMode = OneWayBinding Then CanUpdateTarget = True
+    If mBindingMode = OneTimeBinding And mOneTimeBoundCounter = 0 Then CanUpdateTarget = True
+End Function
+
+Private Sub UpdateComboBoxSelected()
+    Dim vnewValue As String
+    vnewValue = CallByName(vm, mSourcePropertyPath, VbGet)
+    CallByName cbo, mTargetProperty, VbLet, vnewValue
 End Sub
 
 Private Sub UpdateComboBoxList()
@@ -98,12 +119,4 @@ Private Sub UpdateComboBoxList()
     For Each Key In NewList.Keys
         cbo.AddItem NewList.Item(Key)
     Next Key
-End Sub
-
-Private Sub UpdateSource()
-    If mBindingMode = TwoWayBinding Or mBindingMode = OneWayToSource Then
-        Dim vNewValue As Variant
-        vNewValue = CallByName(cbo, mTargetProperty, VbGet)
-        CallByName vm, mSourcePropertyPath, VbLet, vNewValue
-    End If
 End Sub

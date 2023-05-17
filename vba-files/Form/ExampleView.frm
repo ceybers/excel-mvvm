@@ -13,6 +13,8 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
+
+
 '@Folder "View"
 Option Explicit
 Implements IView
@@ -58,8 +60,8 @@ Private Function IView_ShowDialog(ByVal ViewModel As Object) As Boolean
     Set vm = ViewModel
     
     InitializeControls
-    
     BindControls
+    BindCommands
     
     Me.Show vbModal
     
@@ -68,19 +70,36 @@ End Function
 
 Private Sub InitializeControls()
     vm.InitializeListViewSize Me.lvSize
+    vm.InitializeTreeViewSize Me.tvSize
 End Sub
 
 Private Sub BindControls()
     With vm.Context.BindingManager
         .BindPropertyPath vm, "FirstName", Me.txtFirstname, "Value"
+        
         .BindPropertyPath vm, "LastName", Me.lblFirstName, "Caption"
+        
         .BindPropertyPath vm, "IsFoobar", Me.chkIsFoobar, "Value"
         .BindPropertyPath vm, "IsFoobarCaption", Me.chkIsFoobar, "Caption"
+        
         .BindPropertyPath vm, "IsFoobar", Me.optIsFooBar, "Value"
         .BindPropertyPath vm, "IsFoobarCaption", Me.optIsFooBar, "Caption"
+        
         .BindPropertyPath vm, "Size", Me.cboSize, "Value"
         .BindPropertyPath vm, "SizeOptions", Me.cboSize, "List"
+        
         .BindPropertyPath vm, "Size", Me.lvSize, "SelectedItem"
         .BindPropertyPath vm, "SizeOptions", Me.lvSize, "ListItems"
+        
+        .BindPropertyPath vm, "Size", Me.tvSize, "SelectedItem"
+        .BindPropertyPath vm, "SizeOptions", Me.tvSize, "Nodes"
+        
+        .BindPropertyPath vm, "FirstName", Me.cmbTestMsgbox, "Caption"
+    End With
+End Sub
+
+Private Sub BindCommands()
+    With vm.Context.CommandManager
+        .BindCommand vm, "TestMsgboxCommand", Me.cmbTestMsgbox
     End With
 End Sub

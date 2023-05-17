@@ -8,7 +8,7 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 '@IgnoreModule SetAssignmentWithIncompatibleObjectType
-'@Folder("Bindings")
+'@Folder "PropertyBindings"
 Option Explicit
 Implements IPropertyBinding
 
@@ -23,6 +23,7 @@ Private mSourcePropertyPath As String
 Private WithEvents lv As MSComctlLib.ListView
 Attribute lv.VB_VarHelpID = -1
 Private mTargetProperty As String
+Private mOneTimeBoundCounter As Long
 
 Private Property Get IPropertyBinding_Mode() As BindingMode
     IPropertyBinding_Mode = mBindingMode
@@ -72,7 +73,7 @@ Private Sub vm_PropertyChanged(ByVal PropertyName As String)
 End Sub
 
 Private Sub UpdateTarget()
-    If mBindingMode = TwoWayBinding Or mBindingMode = OneWayBinding Then
+    If CanUpdateTarget Then
         If mTargetProperty = "SelectedItem" Then
             UpdateListViewSelectedItem
         ElseIf mTargetProperty = "ListItems" Then
@@ -82,15 +83,35 @@ Private Sub UpdateTarget()
             Debug.Assert False
         End If
     End If
+    
+    If mBindingMode = OneTimeBinding Then mOneTimeBoundCounter = mOneTimeBoundCounter + 1
 End Sub
 
+Private Sub UpdateSource()
+    If mBindingMode = TwoWayBinding Or mBindingMode = OneWayToSource Then
+        If mTargetProperty = "SelectedItem" Then
+            Dim vnewValue As Variant
+            vnewValue = CallByName(lv, mTargetProperty, VbGet)
+            CallByName vm, mSourcePropertyPath, VbLet, vnewValue
+        Else
+            Debug.Assert False
+        End If
+    End If
+End Sub
+
+Private Function CanUpdateTarget() As Boolean
+    If mBindingMode = TwoWayBinding Then CanUpdateTarget = True
+    If mBindingMode = OneWayBinding Then CanUpdateTarget = True
+    If mBindingMode = OneTimeBinding And mOneTimeBoundCounter = 0 Then CanUpdateTarget = True
+End Function
+
 Private Sub UpdateListViewSelectedItem()
-    Dim vNewValue As String
-    vNewValue = CallByName(vm, mSourcePropertyPath, VbGet)
-    ' CallByName lv, mTargetProperty, VbLet, vNewValue
+    Dim vnewValue As String
+    vnewValue = CallByName(vm, mSourcePropertyPath, VbGet)
+    
     Dim ListItem As ListItem
     For Each ListItem In lv.ListItems
-        If ListItem.Text = vNewValue Then
+        If ListItem.Text = vnewValue Then
             Set lv.SelectedItem = ListItem
             Exit Sub
         End If
@@ -98,7 +119,7 @@ Private Sub UpdateListViewSelectedItem()
 End Sub
 
 Private Sub UpdateListViewListItems()
-    If DO_DEBUG Then Debug.Print "ListViewPropertyBinding UpdateComboBoxList()"
+    If DO_DEBUG Then Debug.Print "ListViewPropertyBinding UpdateListViewListItems()"
     
     lv.ListItems.Clear
     
@@ -109,16 +130,4 @@ Private Sub UpdateListViewListItems()
     For Each Key In NewList.Keys
         lv.ListItems.Add Key:=Key, Text:=NewList.Item(Key)
     Next Key
-End Sub
-
-Private Sub UpdateSource()
-    If mBindingMode = TwoWayBinding Or mBindingMode = OneWayToSource Then
-        If mTargetProperty = "SelectedItem" Then
-            Dim vNewValue As Variant
-            vNewValue = CallByName(lv, mTargetProperty, VbGet)
-            CallByName vm, mSourcePropertyPath, VbLet, vNewValue
-        Else
-            Debug.Assert False
-        End If
-    End If
 End Sub
