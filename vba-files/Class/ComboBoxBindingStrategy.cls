@@ -2,7 +2,7 @@ VERSION 1.0 CLASS
 BEGIN
   MultiUse = -1  'True
 END
-Attribute VB_Name = "TextBoxBindingStrategy"
+Attribute VB_Name = "ComboBoxBindingStrategy"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
@@ -12,8 +12,8 @@ Option Explicit
 Implements IBindingStrategy
 
 Private Function IBindingStrategy_CreateBinding(ByVal Source As IViewModel, ByVal SourcePropertyPath As String, ByVal Target As Control, Optional ByVal TargetProperty As String) As IPropertyBinding
-    Dim NewBinding As TextBoxPropertyBinding
-    Set NewBinding = New TextBoxPropertyBinding
+    Dim NewBinding As ComboBoxPropertyBinding
+    Set NewBinding = New ComboBoxPropertyBinding
     NewBinding.Create Source, SourcePropertyPath, Target, TargetProperty
     Set IBindingStrategy_CreateBinding = NewBinding
 End Function

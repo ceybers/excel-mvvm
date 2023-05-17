@@ -2,7 +2,7 @@ VERSION 1.0 CLASS
 BEGIN
   MultiUse = -1  'True
 END
-Attribute VB_Name = "CheckBoxPropertyBinding"
+Attribute VB_Name = "ListViewPropertyBinding"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
@@ -20,8 +20,8 @@ Private WithEvents vm As ViewModel
 Attribute vm.VB_VarHelpID = -1
 Private mSourcePropertyPath As String
 '@MemberAttribute VB_VarHelpID, -1
-Private WithEvents cb As MSForms.CheckBox
-Attribute cb.VB_VarHelpID = -1
+Private WithEvents lv As MSComctlLib.ListView
+Attribute lv.VB_VarHelpID = -1
 Private mTargetProperty As String
 
 Private Property Get IPropertyBinding_Mode() As BindingMode
@@ -37,7 +37,7 @@ Private Property Get IPropertyBinding_SourcePropertyPath() As String
 End Property
 
 Private Property Get IPropertyBinding_Target() As Object
-    Set IPropertyBinding_Target = cb
+    Set IPropertyBinding_Target = lv
 End Property
 
 Private Property Get IPropertyBinding_TargetProperty() As String
@@ -45,13 +45,13 @@ Private Property Get IPropertyBinding_TargetProperty() As String
 End Property
 
 Public Sub Create(ByVal Source As IViewModel, ByVal SourcePropertyPath As String, ByVal Target As Control, Optional ByVal TargetProperty As String)
-    If DO_DEBUG Then Debug.Print "CheckBoxPropertyBinding Create(vm, "; SourcePropertyPath; ", "; Target.Name; ")"
+    If DO_DEBUG Then Debug.Print "ListViewPropertyBinding Create(vm, "; SourcePropertyPath; ", "; Target.Name; ")"
     Set vm = Source
     mSourcePropertyPath = SourcePropertyPath
-    Set cb = Target
+    Set lv = Target
     mTargetProperty = TargetProperty
     
-    If TargetProperty = "Value" Then
+    If TargetProperty = "SelectedItem" Then
         mBindingMode = TwoWayBinding
     Else
         mBindingMode = OneWayBinding
@@ -60,29 +60,65 @@ Public Sub Create(ByVal Source As IViewModel, ByVal SourcePropertyPath As String
     UpdateTarget
 End Sub
 
-Private Sub cb_Change()
-    If DO_DEBUG Then Debug.Print "CheckBoxPropertyBinding cb_Change()"
+Private Sub lv_ItemClick(ByVal Item As MSComctlLib.ListItem)
+    If DO_DEBUG Then Debug.Print "ListViewPropertyBinding lv_ItemClick()"
     UpdateSource
 End Sub
 
 Private Sub vm_PropertyChanged(ByVal PropertyName As String)
     If PropertyName <> mSourcePropertyPath Then Exit Sub
-    If DO_DEBUG Then Debug.Print "CheckBoxPropertyBinding vm_PropertyChanged()"
+    If DO_DEBUG Then Debug.Print "ListViewPropertyBinding vm_PropertyChanged()"
     UpdateTarget
 End Sub
 
 Private Sub UpdateTarget()
     If mBindingMode = TwoWayBinding Or mBindingMode = OneWayBinding Then
-        Dim vNewValue As String
-        vNewValue = CallByName(vm, mSourcePropertyPath, VbGet)
-        CallByName cb, mTargetProperty, VbLet, vNewValue
+        If mTargetProperty = "SelectedItem" Then
+            UpdateListViewSelectedItem
+        ElseIf mTargetProperty = "ListItems" Then
+            UpdateListViewListItems
+        Else
+            Debug.Print "Not yet implemented"
+            Debug.Assert False
+        End If
     End If
+End Sub
+
+Private Sub UpdateListViewSelectedItem()
+    Dim vNewValue As String
+    vNewValue = CallByName(vm, mSourcePropertyPath, VbGet)
+    ' CallByName lv, mTargetProperty, VbLet, vNewValue
+    Dim ListItem As ListItem
+    For Each ListItem In lv.ListItems
+        If ListItem.Text = vNewValue Then
+            Set lv.SelectedItem = ListItem
+            Exit Sub
+        End If
+    Next ListItem
+End Sub
+
+Private Sub UpdateListViewListItems()
+    If DO_DEBUG Then Debug.Print "ListViewPropertyBinding UpdateComboBoxList()"
+    
+    lv.ListItems.Clear
+    
+    Dim NewList As Scripting.Dictionary
+    Set NewList = CallByName(vm, mSourcePropertyPath, VbGet)
+    
+    Dim Key As Variant
+    For Each Key In NewList.Keys
+        lv.ListItems.Add Key:=Key, Text:=NewList.Item(Key)
+    Next Key
 End Sub
 
 Private Sub UpdateSource()
     If mBindingMode = TwoWayBinding Or mBindingMode = OneWayToSource Then
-        Dim vNewValue As Variant
-        vNewValue = CallByName(cb, mTargetProperty, VbGet)
-        CallByName vm, mSourcePropertyPath, VbLet, vNewValue
+        If mTargetProperty = "SelectedItem" Then
+            Dim vNewValue As Variant
+            vNewValue = CallByName(lv, mTargetProperty, VbGet)
+            CallByName vm, mSourcePropertyPath, VbLet, vNewValue
+        Else
+            Debug.Assert False
+        End If
     End If
 End Sub

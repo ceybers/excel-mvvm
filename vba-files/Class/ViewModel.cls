@@ -22,7 +22,9 @@ Private Type TState
     DateOfBirth As Date
     Foo As String
     Bar As Double
+    
     Size As String
+    SizeOptions As Scripting.Dictionary
     
     IsFoobar As Boolean
     IsFoobarCaption As String
@@ -111,6 +113,16 @@ Public Property Let Size(ByVal RHS As String)
     End If
 End Property
 
+Public Property Get SizeOptions() As Scripting.Dictionary
+    Set SizeOptions = This.SizeOptions
+End Property
+
+Public Property Set SizeOptions(ByVal RHS As Scripting.Dictionary)
+    Set This.SizeOptions = RHS
+    OnPropertyChanged "SizeOptions"
+End Property
+
+
 Public Property Get Bar() As Double
     Bar = This.Bar
 End Property
@@ -152,4 +164,17 @@ Public Sub DebugPrint()
     Debug.Print " Size: "; Size
     Debug.Print " IsFoobar: "; IsFoobar
     Debug.Print "---"
+End Sub
+
+Public Sub InitializeListViewSize(ByVal lv As MSComctlLib.ListView)
+    With lv
+        .ListItems.Clear
+        .ColumnHeaders.Clear
+        .ColumnHeaders.Add Text:="Value"
+        .view = lvwReport
+        .Gridlines = True
+        .LabelEdit = lvwManual
+        .HideSelection = False
+        .FullRowSelect = True
+    End With
 End Sub

@@ -17,5 +17,3 @@ Private Function IBindingStrategy_CreateBinding(ByVal Source As IViewModel, ByVa
     NewBinding.Create Source, SourcePropertyPath, Target, TargetProperty
     Set IBindingStrategy_CreateBinding = NewBinding
 End Function
-
-

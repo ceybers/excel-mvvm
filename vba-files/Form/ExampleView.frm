@@ -57,7 +57,8 @@ End Sub
 Private Function IView_ShowDialog(ByVal ViewModel As Object) As Boolean
     Set vm = ViewModel
     
-    InitializeListViews
+    InitializeControls
+    
     BindControls
     
     Me.Show vbModal
@@ -65,17 +66,8 @@ Private Function IView_ShowDialog(ByVal ViewModel As Object) As Boolean
     IView_ShowDialog = Not This.IsCancelled
 End Function
 
-Private Sub InitializeListViews()
-    With Me.lvSize
-        .view = lvwReport
-        '.Arrange = lvwAutoLeft
-        .Gridlines = True
-        .LabelEdit = lvwManual
-        .HideSelection = False
-        .FullRowSelect = True
-        .ColumnHeaders.Clear
-        .ColumnHeaders.Add Text:="Value"
-    End With
+Private Sub InitializeControls()
+    vm.InitializeListViewSize Me.lvSize
 End Sub
 
 Private Sub BindControls()
@@ -86,5 +78,9 @@ Private Sub BindControls()
         .BindPropertyPath vm, "IsFoobarCaption", Me.chkIsFoobar, "Caption"
         .BindPropertyPath vm, "IsFoobar", Me.optIsFooBar, "Value"
         .BindPropertyPath vm, "IsFoobarCaption", Me.optIsFooBar, "Caption"
+        .BindPropertyPath vm, "Size", Me.cboSize, "Value"
+        .BindPropertyPath vm, "SizeOptions", Me.cboSize, "List"
+        .BindPropertyPath vm, "Size", Me.lvSize, "SelectedItem"
+        .BindPropertyPath vm, "SizeOptions", Me.lvSize, "ListItems"
     End With
 End Sub

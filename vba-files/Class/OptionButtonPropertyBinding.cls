@@ -12,7 +12,7 @@ Attribute VB_Exposed = False
 Option Explicit
 Implements IPropertyBinding
 
-Private Const DO_DEBUG As Boolean = True
+Private Const DO_DEBUG As Boolean = False
 
 Private mBindingMode As BindingMode
 '@MemberAttribute VB_VarHelpID, -1

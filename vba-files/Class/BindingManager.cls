@@ -7,7 +7,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'@Folder("Bindings")
+'@Folder "AppContext"
 Option Explicit
 
 Private Type TBindingManager
@@ -28,6 +28,8 @@ Private Sub InitializeBindingStrategies()
         .Add Item:=New LabelBindingStrategy, Key:="MSForms.Label"
         .Add Item:=New CheckBoxBindingStrategy, Key:="MSForms.CheckBox"
         .Add Item:=New OptionButtonBindingStrategy, Key:="MSForms.OptionButton"
+        .Add Item:=New ComboBoxBindingStrategy, Key:="MSForms.ComboBox"
+        .Add Item:=New ListViewBindingStrategy, Key:="MSComctlLib.ListView"
     End With
 End Sub
 
@@ -49,11 +51,13 @@ End Sub
 
 Private Function GetFullTypeName(ByVal Target As Control) As String
     GetFullTypeName = TypeName(Target)
-    
-    ' TODO Check how to handle MScomctllib
-    Debug.Assert InStr(GetFullTypeName, "ListView") = 0
-    
-    If TypeOf Target Is MSForms.Control Then
-        GetFullTypeName = "MSForms." & GetFullTypeName
-    End If
+   
+    Select Case GetFullTypeName
+        Case "ListView4":
+            GetFullTypeName = "MSComctlLib.ListView"
+        Case Else:
+            If TypeOf Target Is MSForms.Control Then
+                GetFullTypeName = "MSForms." & GetFullTypeName
+            End If
+    End Select
 End Function
