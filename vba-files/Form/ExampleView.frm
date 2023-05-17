@@ -83,15 +83,20 @@ End Sub
 Private Sub BindControls()
     Set This.EventHandlers = New Collection
     
-    BindControl Me.cmbTest, "Foo"
-    BindControl Me.txtFoobar, "Bar"
-    BindControl Me.lblFoobar, "foo"
+    'BindControl Me.cmbTest, "Foo"
+    'BindControl Me.txtFoobar, "Bar"
+    'BindControl Me.lblFoobar, "foo"
     'BindControl Me.txtFirstname, "FirstName"
-    BindControl Me.txtLastName, "LastName"
-    BindControl Me.cboSize, "Size"
-    BindControl Me.lvSize, "Size"
+    'BindControl Me.txtLastName, "LastName"
+    'BindControl Me.cboSize, "Size"
+    'BindControl Me.lvSize, "Size"
     
-    vm.Context.BindingManager.BindPropertyPath vm, "FirstName", Me.txtFirstname, "Value"
+    With vm.Context.BindingManager
+        .BindPropertyPath vm, "FirstName", Me.txtFirstname, "Value"
+        .BindPropertyPath vm, "LastName", Me.lblFirstName, "Caption"
+        .BindPropertyPath vm, "IsFoobar", Me.chkIsFoobar, "Value"
+        .BindPropertyPath vm, "IsFoobarCaption", Me.chkIsFoobar, "Caption"
+    End With
 End Sub
 
 Private Sub BindControl(ByVal ctrl As Control, ByVal PropertyName As String)

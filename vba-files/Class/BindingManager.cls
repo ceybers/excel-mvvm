@@ -25,6 +25,8 @@ End Sub
 Private Sub InitializeBindingStrategies()
     With This.BindingStrategies
         .Add Item:=New TextBoxBindingStrategy, Key:="MSForms.TextBox"
+        .Add Item:=New LabelBindingStrategy, Key:="MSForms.Label"
+        .Add Item:=New CheckBoxBindingStrategy, Key:="MSForms.CheckBox"
     End With
 End Sub
 

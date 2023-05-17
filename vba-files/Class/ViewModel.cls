@@ -23,8 +23,27 @@ Private Type TState
     Foo As String
     Bar As Double
     Size As String
+    
+    IsFoobar As Boolean
+    IsFoobarCaption As String
 End Type
 Private This As TState
+
+Public Property Get IsFoobar() As Boolean
+    IsFoobar = This.IsFoobar
+End Property
+
+Public Property Let IsFoobar(ByVal vNewValue As Boolean)
+    This.IsFoobar = vNewValue
+End Property
+
+Public Property Get IsFoobarCaption() As String
+    IsFoobarCaption = This.IsFoobarCaption
+End Property
+
+Public Property Let IsFoobarCaption(ByVal vNewValue As String)
+    This.IsFoobarCaption = vNewValue
+End Property
 
 Public Property Get Context() As AppContext
     Set Context = This.AppContext
@@ -128,5 +147,6 @@ Public Sub DebugPrint()
     'Debug.Print " Foo: "; Foo
     'Debug.Print " Bar: "; Bar
     Debug.Print " Size: "; Size
+    Debug.Print " IsFoobar: "; IsFoobar
     Debug.Print "---"
 End Sub

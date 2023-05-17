@@ -14,9 +14,9 @@ Public Sub TestView()
     
     With view
         If .ShowDialog(vm) Then
-            Debug.Print "OK"
+            'Debug.Print "OK"
         Else
-            Debug.Print "Cancelled"
+            'Debug.Print "Cancelled"
         End If
     End With
 End Sub

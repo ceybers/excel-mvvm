@@ -10,6 +10,16 @@ Attribute VB_Exposed = False
 '@Folder("Bindings")
 Option Explicit
 
+Public Enum BindingMode
+    TwoWayBinding
+    OneWayBinding
+    OneWayToSource
+    OneTimeBinding 'NYI
+End Enum
+
+Public Property Get Mode() As BindingMode
+End Property
+
 Public Property Get Source() As Object
 End Property
 

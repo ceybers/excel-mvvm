@@ -2,7 +2,7 @@ VERSION 1.0 CLASS
 BEGIN
   MultiUse = -1  'True
 END
-Attribute VB_Name = "TextBoxPropertyBinding"
+Attribute VB_Name = "LabelPropertyBinding"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
@@ -17,8 +17,8 @@ Private mBindingMode As BindingMode
 Private WithEvents vm As ViewModel
 Attribute vm.VB_VarHelpID = -1
 Private mSourcePropertyPath As String
-Private WithEvents tb As MSForms.TextBox
-Attribute tb.VB_VarHelpID = -1
+Private WithEvents lbl As MSForms.Label
+Attribute lbl.VB_VarHelpID = -1
 Private mTargetProperty As String
 
 Private Property Get IPropertyBinding_Mode() As BindingMode
@@ -34,7 +34,7 @@ Private Property Get IPropertyBinding_SourcePropertyPath() As String
 End Property
 
 Private Property Get IPropertyBinding_Target() As Object
-    Set IPropertyBinding_Target = tb
+    Set IPropertyBinding_Target = lbl
 End Property
 
 Private Property Get IPropertyBinding_TargetProperty() As String
@@ -42,44 +42,39 @@ Private Property Get IPropertyBinding_TargetProperty() As String
 End Property
 
 Public Sub Create(ByVal Source As IViewModel, ByVal SourcePropertyPath As String, ByVal Target As Control, Optional ByVal TargetProperty As String)
-    If DO_DEBUG Then Debug.Print "TextBoxPropertyBinding Create(vm, "; SourcePropertyPath; ", "; Target.Name; ")"
+    If DO_DEBUG Then Debug.Print "LabelPropertyBinding Create(vm, "; SourcePropertyPath; ", "; Target.Name; ")"
     Set vm = Source
     mSourcePropertyPath = SourcePropertyPath
-    Set tb = Target
+    Set lbl = Target
     mTargetProperty = TargetProperty
     
-    If TargetProperty = "Value" Then
-        mBindingMode = TwoWayBinding
-    Else
-        mBindingMode = OneWayBinding
-    End If
-    
+    mBindingMode = OneWayBinding
+        
     UpdateTarget
 End Sub
 
-Private Sub tb_Change()
-    If DO_DEBUG Then Debug.Print "TextBoxPropertyBinding tb_Change()"
-    UpdateSource
+Private Sub lbl_Click()
+    If DO_DEBUG Then Debug.Print "TextBoxPropertyBinding lbl_Click()"
+    'UpdateSource
 End Sub
 
 Private Sub vm_PropertyChanged(ByVal PropertyName As String)
     If PropertyName <> mSourcePropertyPath Then Exit Sub
-    If DO_DEBUG Then Debug.Print "TextBoxPropertyBinding vm_PropertyChanged()"
+    If DO_DEBUG Then Debug.Print "LabelPropertyBinding vm_PropertyChanged()"
     UpdateTarget
 End Sub
 
 Private Sub UpdateTarget()
     If mBindingMode = TwoWayBinding Or mBindingMode = OneWayBinding Then
+        If DO_DEBUG Then Debug.Print "LabelPropertyBinding vm_PropertyChanged()"
         Dim vNewValue As String
         vNewValue = CallByName(vm, mSourcePropertyPath, VbGet)
-        CallByName tb, mTargetProperty, VbLet, vNewValue
+        CallByName lbl, mTargetProperty, VbLet, vNewValue
     End If
 End Sub
 
 Private Sub UpdateSource()
     If mBindingMode = TwoWayBinding Or mBindingMode = OneWayToSource Then
-        Dim vNewValue As String
-        vNewValue = CallByName(tb, mTargetProperty, VbGet)
-        CallByName vm, mSourcePropertyPath, VbLet, vNewValue
+    ' NOOP
     End If
 End Sub

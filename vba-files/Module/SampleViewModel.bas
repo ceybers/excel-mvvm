@@ -11,6 +11,8 @@ Public Function GetSampleViewModel(ByVal Context As AppContext) As ViewModel
         .Foo = "Lorem ipsum"
         .Bar = 42
         .Size = "Small"
+        .IsFoobar = False
+        .IsFoobarCaption = "Is Foo Bar Caption"
         Set GetSampleViewModel = .Self
     End With
 End Function
