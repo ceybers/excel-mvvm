@@ -2,14 +2,8 @@ Attribute VB_Name = "SampleViewModel"
 '@Folder("ViewModel")
 Option Explicit
 
-Public Function GetSampleViewModel(ByVal Context As AppContext) As ViewModel
-    Dim mSizeOptions As Scripting.Dictionary
-    Set mSizeOptions = New Scripting.Dictionary
-    mSizeOptions.Add Key:="S", Item:="Small"
-    mSizeOptions.Add Key:="M", Item:="Medium"
-    mSizeOptions.Add Key:="L", Item:="Large"
-    
-    With New ViewModel
+Public Function GetSampleViewModel(ByVal Context As IAppContext) As SomeViewModel
+    With New SomeViewModel
         Set .Context = Context
         .FirstName = "John"
         .LastName = "Doe"
@@ -17,7 +11,7 @@ Public Function GetSampleViewModel(ByVal Context As AppContext) As ViewModel
         .Foo = "Lorem ipsum"
         .Bar = 42
         .Size = "Small"
-        Set .SizeOptions = mSizeOptions
+        Set .SizeOptions = GetSampleSizeOptions
         .IsFoobar = False
         .IsFoobarCaption = "Is Foo Bar Caption"
         Set GetSampleViewModel = .Self
@@ -25,17 +19,15 @@ Public Function GetSampleViewModel(ByVal Context As AppContext) As ViewModel
         
         .InitializeCommands
     End With
-    
 End Function
 
-Public Sub TestViewModel()
-    Dim ctx As AppContext
-    Set ctx = New AppContext
-    
-    Dim vm As ViewModel
-    Set vm = GetSampleViewModel(ctx)
-    
-    vm.Foo = "TestViewModel"
-    
-    Stop
-End Sub
+Private Function GetSampleSizeOptions() As Scripting.Dictionary
+    Dim Result As Scripting.Dictionary
+    Set Result = New Scripting.Dictionary
+    With Result
+        .Add Key:="S", Item:="Small"
+        .Add Key:="M", Item:="Medium"
+        .Add Key:="L", Item:="Large"
+    End With
+    Set GetSampleSizeOptions = Result
+End Function

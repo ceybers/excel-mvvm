@@ -14,19 +14,23 @@ Public Enum BindingMode
     TwoWayBinding
     OneWayBinding
     OneWayToSource
-    OneTimeBinding 'NYI
+    OneTimeBinding
 End Enum
 
 Public Property Get Mode() As BindingMode
 End Property
 
-Public Property Get Source() As Object ' ViewModel
+'@Description "The ViewModel's Property that is bound to the UserForm's Control."
+Public Property Get Source() As IViewModel
+Attribute Source.VB_Description = "The ViewModel's Property that is bound to the UserForm's Control."
 End Property
 
 Public Property Get SourcePropertyPath() As String
 End Property
 
+'@Description "The UserForm Control that is bound to the ViewModel's Property."
 Public Property Get Target() As Object ' UserForm Control
+Attribute Target.VB_Description = "The UserForm Control that is bound to the ViewModel's Property."
 End Property
 
 Public Property Get TargetProperty() As String

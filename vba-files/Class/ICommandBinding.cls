@@ -11,14 +11,18 @@ Attribute VB_Exposed = False
 '@Folder "Abstractions"
 Option Explicit
 
-Public Property Get Context() As AppContext
+Public Property Get Context() As IAppContext
 End Property
 
-Public Property Get Source() As Object ' ViewModel
+'@Description "The ViewModel associated with this Command Binding."
+Public Property Get Source() As IViewModel
+Attribute Source.VB_Description = "The ViewModel associated with this Command Binding."
 End Property
 
-Public Property Get Command() As ICommand ' Command
+Public Property Get Command() As ICommand
 End Property
 
-Public Property Get Target() As Object ' UserForm Control
+'@Description "The UserForm Control that will be bound to the ViewModel's Property."
+Public Property Get Target() As Object
+Attribute Target.VB_Description = "The UserForm Control that will be bound to the ViewModel's Property."
 End Property

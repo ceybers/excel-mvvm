@@ -16,8 +16,9 @@ Private Type TBindingManager
 End Type
 Private This As TBindingManager
 
-Private Sub class_initialize()
+Private Sub Class_Initialize()
     Set This.PropertyBindings = New Collection
+    
     Set This.BindingStrategies = New Scripting.Dictionary
     InitializeBindingStrategies
 End Sub
@@ -37,6 +38,7 @@ End Sub
 
 Public Sub BindPropertyPath(ByVal Source As IViewModel, ByVal SourcePropertyPath As String, ByVal Target As Object, Optional ByVal TargetProperty As String)
     Dim BindingStrategy As IBindingStrategy
+    
     On Error GoTo NoStrategyFound
     Set BindingStrategy = This.BindingStrategies.Item(GetFullTypeName(Target))
     On Error GoTo 0

@@ -11,9 +11,6 @@ Attribute VB_Exposed = False
 '@Folder "Abstractions"
 Option Explicit
 
-Public Event CanExecuteChanged()
-Public Event Executed()
-
 Public Property Get Caption() As String
 End Property
 

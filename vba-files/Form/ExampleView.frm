@@ -13,14 +13,13 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
-
-
 '@Folder "View"
 Option Explicit
 Implements IView
  
+ ' TODO vm doesn't need WithEvents in the View
 '@MemberAttribute VB_VarHelpID, -1
-Private WithEvents vm As ViewModel
+Private WithEvents vm As SomeViewModel ' Needs to be the specific type, so we can access .InitializeListViewSize() etc.
 Attribute vm.VB_VarHelpID = -1
 Private Type TView
     IsCancelled As Boolean
@@ -56,7 +55,7 @@ Private Sub OnCancel()
     Me.Hide
 End Sub
  
-Private Function IView_ShowDialog(ByVal ViewModel As Object) As Boolean
+Private Function IView_ShowDialog(ByVal ViewModel As IViewModel) As Boolean
     Set vm = ViewModel
     
     InitializeControls
@@ -69,7 +68,9 @@ Private Function IView_ShowDialog(ByVal ViewModel As Object) As Boolean
 End Function
 
 Private Sub InitializeControls()
+    '@Ignore ArgumentWithIncompatibleObjectType
     vm.InitializeListViewSize Me.lvSize
+    '@Ignore ArgumentWithIncompatibleObjectType
     vm.InitializeTreeViewSize Me.tvSize
 End Sub
 

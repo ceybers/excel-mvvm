@@ -16,7 +16,7 @@ Private Const DO_DEBUG As Boolean = False
 
 Private mBindingMode As BindingMode
 '@MemberAttribute VB_VarHelpID, -1
-Private WithEvents vm As ViewModel
+Private WithEvents vm As SomeViewModel
 Attribute vm.VB_VarHelpID = -1
 Private mSourcePropertyPath As String
 '@MemberAttribute VB_VarHelpID, -1
@@ -29,7 +29,7 @@ Private Property Get IPropertyBinding_Mode() As BindingMode
     IPropertyBinding_Mode = mBindingMode
 End Property
 
-Private Property Get IPropertyBinding_Source() As Object
+Private Property Get IPropertyBinding_Source() As IViewModel
     Set IPropertyBinding_Source = vm
 End Property
 

@@ -9,6 +9,7 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 '@Folder "AppContext"
 Option Explicit
+Implements IAppContext
 
 Private Type TAppContext
     BindingManager As BindingManager
@@ -16,15 +17,15 @@ Private Type TAppContext
 End Type
 Private This As TAppContext
 
-Public Property Get BindingManager() As BindingManager
-    Set BindingManager = This.BindingManager
+Private Property Get IAppContext_BindingManager() As BindingManager
+    Set IAppContext_BindingManager = This.BindingManager
 End Property
 
-Public Property Get CommandManager() As CommandManager
-    Set CommandManager = This.CommandManager
+Private Property Get IAppContext_CommandManager() As CommandManager
+    Set IAppContext_CommandManager = This.CommandManager
 End Property
 
-Private Sub class_initialize()
+Private Sub Class_Initialize()
     Set This.BindingManager = New BindingManager
     Set This.CommandManager = New CommandManager
 End Sub

@@ -13,11 +13,8 @@ Implements ICommandBinding
 
 Private Const DO_DEBUG As Boolean = False
 
-Private mAppContext As AppContext
-'@MemberAttribute VB_VarHelpID, -1
-Private WithEvents mSource As ViewModel
-Attribute mSource.VB_VarHelpID = -1
-Private mSourcePropertyPath As String
+Private mAppContext As IAppContext
+Private mSource As IViewModel
 '@MemberAttribute VB_VarHelpID, -1
 Private mCommand As ICommand
 Attribute mCommand.VB_VarHelpID = -1
@@ -25,7 +22,23 @@ Attribute mCommand.VB_VarHelpID = -1
 Private WithEvents mTarget As MSForms.CommandButton
 Attribute mTarget.VB_VarHelpID = -1
 
-Public Sub Create(ByVal AppContext As AppContext, ByVal Source As ViewModel, ByVal Command As ICommand, ByVal Target As MSForms.CommandButton)
+Private Property Get ICommandBinding_Context() As IAppContext
+    Set ICommandBinding_Context = mAppContext
+End Property
+
+Private Property Get ICommandBinding_Source() As IViewModel
+    Set ICommandBinding_Source = mSource
+End Property
+
+Private Property Get ICommandBinding_Command() As ICommand
+    Set ICommandBinding_Command = mCommand
+End Property
+
+Private Property Get ICommandBinding_Target() As Object
+    Set ICommandBinding_Target = mTarget
+End Property
+
+Public Sub Create(ByVal AppContext As IAppContext, ByVal Source As IViewModel, ByVal Command As ICommand, ByVal Target As MSForms.CommandButton)
     Set mAppContext = AppContext
     Set mSource = Source
     Set mCommand = Command
@@ -40,27 +53,12 @@ Private Sub mTarget_Click()
     mCommand.Execute
 End Sub
 
-Private Sub mCommand_CanExecuteChanged()
-    If DO_DEBUG Then Debug.Print "CommandBinding cmd_CanExecuteChanged()"
-    mTarget.Enabled = mCommand.CanExecute
-End Sub
+' Cannot RaiseEvents at ICommand interface from the concrete class TestMsgBoxCommand etc.
+'Private Sub mCommand_CanExecuteChanged()
+'    If DO_DEBUG Then Debug.Print "CommandBinding cmd_CanExecuteChanged()"
+'    mTarget.Enabled = mCommand.CanExecute
+'End Sub
 
-Private Sub mCommand_Executed()
-    If DO_DEBUG Then Debug.Print "CommandBinding cmd_Executed()"
-End Sub
-
-Private Property Get ICommandBinding_Context() As AppContext
-    Set ICommandBinding_Context = mAppContext
-End Property
-
-Private Property Get ICommandBinding_Source() As Object
-    Set ICommandBinding_Source = mSource
-End Property
-
-Private Property Get ICommandBinding_Command() As ICommand
-    ICommandBinding_Command = mSourcePropertyPath
-End Property
-
-Private Property Get ICommandBinding_Target() As Object
-    Set ICommandBinding_Target = mTarget
-End Property
+'Private Sub mCommand_Executed()
+'    If DO_DEBUG Then Debug.Print "CommandBinding cmd_Executed()"
+'End Sub

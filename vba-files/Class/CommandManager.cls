@@ -12,22 +12,14 @@ Option Explicit
 
 Private Type TBindingManager
     Commands As Collection
-    'Strategy As CommandBindingStrategy
 End Type
 Private This As TBindingManager
 
-Private Sub class_initialize()
+Private Sub Class_Initialize()
     Set This.Commands = New Collection
-    'Set This.Strategy = New CommandBindingStrategy
 End Sub
 
-'Public Sub BindCommand(ByVal ViewModel As ViewModel, ByVal CommandName As String, ByVal Control As MSForms.CommandButton)
-'    Dim NewBinding As CommandButtonCommandBinding
-'    Set NewBinding = This.Strategy.CreateBinding(ViewModel, CommandName, Control)
-'    This.Commands.Add NewBinding
-'End Sub
-
-Public Sub BindCommand2(ByVal Context As AppContext, ByVal ViewModel As Object, ByVal Command As ICommand, ByVal Control As MSForms.CommandButton)
+Public Sub BindCommand2(ByVal Context As IAppContext, ByVal ViewModel As IViewModel, ByVal Command As ICommand, ByVal Control As Object)
     Dim NewBinding As CommandBinding
     Set NewBinding = New CommandBinding
     NewBinding.Create Context, ViewModel, Command, Control
