@@ -27,16 +27,24 @@ Private Sub InitializeBindingStrategies()
         .Add Item:=New TextBoxBindingStrategy, Key:="MSForms.TextBox"
         .Add Item:=New LabelBindingStrategy, Key:="MSForms.Label"
         .Add Item:=New CheckBoxBindingStrategy, Key:="MSForms.CheckBox"
+        .Add Item:=New OptionButtonBindingStrategy, Key:="MSForms.OptionButton"
     End With
 End Sub
 
-Public Sub BindPropertyPath(ByVal Source As IViewModel, ByVal SourcePropertyPath As String, ByVal Target As Control, Optional ByVal TargetProperty As String)
+Public Sub BindPropertyPath(ByVal Source As IViewModel, ByVal SourcePropertyPath As String, ByVal Target As Object, Optional ByVal TargetProperty As String)
     Dim BindingStrategy As IBindingStrategy
+    On Error GoTo NoStrategyFound
     Set BindingStrategy = This.BindingStrategies.Item(GetFullTypeName(Target))
+    On Error GoTo 0
     
     Dim NewBinding As IPropertyBinding
     Set NewBinding = BindingStrategy.CreateBinding(Source, SourcePropertyPath, Target, TargetProperty)
     This.PropertyBindings.Add Item:=NewBinding
+    Exit Sub
+    
+NoStrategyFound:
+    Err.Clear
+    MsgBox "This control hasn't been implemented yet." & vbCrLf & GetFullTypeName(Target)
 End Sub
 
 Private Function GetFullTypeName(ByVal Target As Control) As String

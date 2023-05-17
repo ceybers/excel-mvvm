@@ -22,7 +22,6 @@ Private WithEvents vm As ViewModel
 Attribute vm.VB_VarHelpID = -1
 Private Type TView
     IsCancelled As Boolean
-    EventHandlers As Collection
     'ViewModel As IViewModel
 End Type
 Private This As TView
@@ -43,7 +42,6 @@ Private Sub CancelButton_Click()
     OnCancel
 End Sub
  
-
 Private Sub UserForm_QueryClose(Cancel As Integer, CloseMode As Integer)
     If CloseMode = VbQueryClose.vbFormControlMenu Then
         Cancel = True
@@ -57,13 +55,13 @@ Private Sub OnCancel()
 End Sub
  
 Private Function IView_ShowDialog(ByVal ViewModel As Object) As Boolean
-    'Set This.ViewModel = ViewModel
     Set vm = ViewModel
     
     InitializeListViews
     BindControls
     
     Me.Show vbModal
+    
     IView_ShowDialog = Not This.IsCancelled
 End Function
 
@@ -81,39 +79,12 @@ Private Sub InitializeListViews()
 End Sub
 
 Private Sub BindControls()
-    Set This.EventHandlers = New Collection
-    
-    'BindControl Me.cmbTest, "Foo"
-    'BindControl Me.txtFoobar, "Bar"
-    'BindControl Me.lblFoobar, "foo"
-    'BindControl Me.txtFirstname, "FirstName"
-    'BindControl Me.txtLastName, "LastName"
-    'BindControl Me.cboSize, "Size"
-    'BindControl Me.lvSize, "Size"
-    
     With vm.Context.BindingManager
         .BindPropertyPath vm, "FirstName", Me.txtFirstname, "Value"
         .BindPropertyPath vm, "LastName", Me.lblFirstName, "Caption"
         .BindPropertyPath vm, "IsFoobar", Me.chkIsFoobar, "Value"
         .BindPropertyPath vm, "IsFoobarCaption", Me.chkIsFoobar, "Caption"
+        .BindPropertyPath vm, "IsFoobar", Me.optIsFooBar, "Value"
+        .BindPropertyPath vm, "IsFoobarCaption", Me.optIsFooBar, "Caption"
     End With
-End Sub
-
-Private Sub BindControl(ByVal ctrl As Control, ByVal PropertyName As String)
-    Dim eh As EventHandler
-    Set eh = New EventHandler
-    eh.Update ctrl, PropertyName, vm
-    This.EventHandlers.Add Item:=eh
-    eh.Repaint
-End Sub
-
-Private Sub vm_PropertyChanged(ByVal PropertyName As String)
-    If This.EventHandlers Is Nothing Then Exit Sub
-    
-    Debug.Print "PropertyChanged("; PropertyName; ")"
-    
-    Dim eh As EventHandler
-    For Each eh In This.EventHandlers
-        eh.HandlePropertyChanged PropertyName
-    Next eh
 End Sub

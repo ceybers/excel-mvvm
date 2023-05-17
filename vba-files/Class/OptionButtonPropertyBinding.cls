@@ -2,7 +2,7 @@ VERSION 1.0 CLASS
 BEGIN
   MultiUse = -1  'True
 END
-Attribute VB_Name = "LabelPropertyBinding"
+Attribute VB_Name = "OptionButtonPropertyBinding"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
@@ -12,7 +12,7 @@ Attribute VB_Exposed = False
 Option Explicit
 Implements IPropertyBinding
 
-Private Const DO_DEBUG As Boolean = False
+Private Const DO_DEBUG As Boolean = True
 
 Private mBindingMode As BindingMode
 '@MemberAttribute VB_VarHelpID, -1
@@ -20,8 +20,8 @@ Private WithEvents vm As ViewModel
 Attribute vm.VB_VarHelpID = -1
 Private mSourcePropertyPath As String
 '@MemberAttribute VB_VarHelpID, -1
-Private WithEvents lbl As MSForms.Label
-Attribute lbl.VB_VarHelpID = -1
+Private WithEvents opt As MSForms.OptionButton
+Attribute opt.VB_VarHelpID = -1
 Private mTargetProperty As String
 
 Private Property Get IPropertyBinding_Mode() As BindingMode
@@ -37,7 +37,7 @@ Private Property Get IPropertyBinding_SourcePropertyPath() As String
 End Property
 
 Private Property Get IPropertyBinding_Target() As Object
-    Set IPropertyBinding_Target = lbl
+    Set IPropertyBinding_Target = opt
 End Property
 
 Private Property Get IPropertyBinding_TargetProperty() As String
@@ -45,39 +45,44 @@ Private Property Get IPropertyBinding_TargetProperty() As String
 End Property
 
 Public Sub Create(ByVal Source As IViewModel, ByVal SourcePropertyPath As String, ByVal Target As Control, Optional ByVal TargetProperty As String)
-    If DO_DEBUG Then Debug.Print "LabelPropertyBinding Create(vm, "; SourcePropertyPath; ", "; Target.Name; ")"
+    If DO_DEBUG Then Debug.Print "OptionButtonPropertyBinding Create(vm, "; SourcePropertyPath; ", "; Target.Name; ")"
     Set vm = Source
     mSourcePropertyPath = SourcePropertyPath
-    Set lbl = Target
+    Set opt = Target
     mTargetProperty = TargetProperty
     
-    mBindingMode = OneWayBinding
-        
+    If TargetProperty = "Value" Then
+        mBindingMode = TwoWayBinding
+    Else
+        mBindingMode = OneWayBinding
+    End If
+    
     UpdateTarget
 End Sub
 
-Private Sub lbl_Click()
-    If DO_DEBUG Then Debug.Print "TextBoxPropertyBinding lbl_Click()"
-    'UpdateSource
+Private Sub opt_Change()
+    If DO_DEBUG Then Debug.Print "OptionButtonPropertyBinding opt_Change()"
+    UpdateSource
 End Sub
 
 Private Sub vm_PropertyChanged(ByVal PropertyName As String)
     If PropertyName <> mSourcePropertyPath Then Exit Sub
-    If DO_DEBUG Then Debug.Print "LabelPropertyBinding vm_PropertyChanged()"
+    If DO_DEBUG Then Debug.Print "OptionButtonPropertyBinding vm_PropertyChanged()"
     UpdateTarget
 End Sub
 
 Private Sub UpdateTarget()
     If mBindingMode = TwoWayBinding Or mBindingMode = OneWayBinding Then
-        If DO_DEBUG Then Debug.Print "LabelPropertyBinding vm_PropertyChanged()"
         Dim vNewValue As String
         vNewValue = CallByName(vm, mSourcePropertyPath, VbGet)
-        CallByName lbl, mTargetProperty, VbLet, vNewValue
+        CallByName opt, mTargetProperty, VbLet, vNewValue
     End If
 End Sub
 
-'Private Sub UpdateSource()
-'    If mBindingMode = TwoWayBinding Or mBindingMode = OneWayToSource Then
-    ' NOOP
-'    End If
-'End Sub
+Private Sub UpdateSource()
+    If mBindingMode = TwoWayBinding Or mBindingMode = OneWayToSource Then
+        Dim vNewValue As Variant
+        vNewValue = CallByName(opt, mTargetProperty, VbGet)
+        CallByName vm, mSourcePropertyPath, VbLet, vNewValue
+    End If
+End Sub

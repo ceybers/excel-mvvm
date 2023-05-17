@@ -7,6 +7,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
+'@IgnoreModule SetAssignmentWithIncompatibleObjectType
 '@Folder("Bindings")
 Option Explicit
 Implements IPropertyBinding
@@ -14,15 +15,17 @@ Implements IPropertyBinding
 Private Const DO_DEBUG As Boolean = False
 
 Private mBindingMode As BindingMode
+'@MemberAttribute VB_VarHelpID, -1
 Private WithEvents vm As ViewModel
 Attribute vm.VB_VarHelpID = -1
 Private mSourcePropertyPath As String
+'@MemberAttribute VB_VarHelpID, -1
 Private WithEvents tb As MSForms.TextBox
 Attribute tb.VB_VarHelpID = -1
 Private mTargetProperty As String
 
 Private Property Get IPropertyBinding_Mode() As BindingMode
-    IPropertyBinding_Source = mBindingMode
+    IPropertyBinding_Mode = mBindingMode
 End Property
 
 Private Property Get IPropertyBinding_Source() As Object

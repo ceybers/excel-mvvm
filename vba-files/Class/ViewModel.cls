@@ -29,12 +29,23 @@ Private Type TState
 End Type
 Private This As TState
 
+Public Property Get Context() As AppContext
+    Set Context = This.AppContext
+End Property
+
+Public Property Set Context(ByVal vNewValue As AppContext)
+    Set This.AppContext = vNewValue
+End Property
+
 Public Property Get IsFoobar() As Boolean
     IsFoobar = This.IsFoobar
 End Property
 
-Public Property Let IsFoobar(ByVal vNewValue As Boolean)
-    This.IsFoobar = vNewValue
+Public Property Let IsFoobar(ByVal RHS As Boolean)
+    If This.IsFoobar <> RHS Then
+        This.IsFoobar = RHS
+        OnPropertyChanged "IsFoobar"
+    End If
 End Property
 
 Public Property Get IsFoobarCaption() As String
@@ -43,14 +54,6 @@ End Property
 
 Public Property Let IsFoobarCaption(ByVal vNewValue As String)
     This.IsFoobarCaption = vNewValue
-End Property
-
-Public Property Get Context() As AppContext
-    Set Context = This.AppContext
-End Property
-
-Public Property Set Context(ByVal vNewValue As AppContext)
-    Set This.AppContext = vNewValue
 End Property
 
 Public Property Get FirstName() As String
