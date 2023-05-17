@@ -7,7 +7,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'@Folder "AppContext"
+'@Folder "MVVM.Infrastructure"
 Option Explicit
 Implements IAppContext
 
@@ -25,7 +25,7 @@ Private Property Get IAppContext_CommandManager() As CommandManager
     Set IAppContext_CommandManager = This.CommandManager
 End Property
 
-Private Sub Class_Initialize()
+Private Sub class_initialize()
     Set This.BindingManager = New BindingManager
     Set This.CommandManager = New CommandManager
 End Sub

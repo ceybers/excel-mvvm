@@ -7,7 +7,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'@Folder "AppContext"
+'@Folder MVVM.Infrastructure.Bindings
 Option Explicit
 
 Private Type TBindingManager
@@ -16,7 +16,7 @@ Private Type TBindingManager
 End Type
 Private This As TBindingManager
 
-Private Sub Class_Initialize()
+Private Sub class_initialize()
     Set This.PropertyBindings = New Collection
     
     Set This.BindingStrategies = New Scripting.Dictionary

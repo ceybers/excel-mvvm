@@ -1,5 +1,5 @@
 Attribute VB_Name = "modDoTest"
-'@Folder "AppContext"
+'@Folder "Worksheets"
 Option Explicit
 
 Private Const DO_DEBUG As Boolean = False

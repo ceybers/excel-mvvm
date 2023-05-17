@@ -7,7 +7,8 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'@Folder "Abstractions"
+'@IgnoreModule ParameterNotUsed
+'@Folder MVVM.Infrastructure.Abstract
 Option Explicit
 
 '@Description "Registers the specified handler."

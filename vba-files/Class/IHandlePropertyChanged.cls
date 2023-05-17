@@ -6,9 +6,9 @@ Attribute VB_Name = "IHandlePropertyChanged"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
-Attribute VB_Exposed = False
+Attribute VB_Exposed = True
 '@Interface
-'@Folder("Abstractions")
+'@Folder MVVM.Infrastructure.Abstract
 Option Explicit
 
 '@Description "A callback invoked when a property value is set."

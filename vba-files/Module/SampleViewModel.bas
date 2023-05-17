@@ -1,5 +1,5 @@
 Attribute VB_Name = "SampleViewModel"
-'@Folder("ViewModel")
+'@Folder "MVVM.ViewModels"
 Option Explicit
 
 Public Function GetSampleViewModel(ByVal Context As IAppContext) As SomeViewModel

@@ -7,7 +7,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'@Folder("ViewModel")
+'@Folder "MVVM.ViewModels"
 Option Explicit
 Implements IViewModel
 Implements INotifyPropertyChanged
@@ -46,7 +46,7 @@ Public Property Set Context(ByVal vNewValue As IAppContext)
     Set This.AppContext = vNewValue
 End Property
 
-Private Sub Class_Initialize()
+Private Sub class_initialize()
     Set This.Handlers = New Collection
     Set This.FavoriteColors = New Collection
     With This.FavoriteColors

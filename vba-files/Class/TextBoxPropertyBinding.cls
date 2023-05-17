@@ -8,7 +8,7 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 '@IgnoreModule SetAssignmentWithIncompatibleObjectType
-'@Folder "PropertyBindings"
+'@Folder "MVVM.Infrastructure.Bindings.PropertyBindings"
 Option Explicit
 Implements IPropertyBinding
 Implements IHandlePropertyChanged
@@ -21,7 +21,7 @@ Attribute tb.VB_VarHelpID = -1
 
 Private Type TState
     BindingMode As BindingMode
-    ViewModel As SomeViewModel
+    ViewModel As IViewModel
     SourcePropertyPath As String
     TargetProperty As String
     OneTimeBoundCounter As Long

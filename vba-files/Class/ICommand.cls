@@ -8,7 +8,7 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 '@Interface
-'@Folder "Abstractions"
+'@Folder MVVM.Infrastructure.Abstract
 Option Explicit
 
 Public Property Get Caption() As String

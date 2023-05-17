@@ -8,7 +8,7 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 '@IgnoreModule ProcedureNotUsed
-'@Folder("ViewModel")
+'@Folder "MVVM.ViewModels"
 Option Explicit
 Implements IViewModel
 Implements INotifyPropertyChanged
@@ -159,7 +159,7 @@ Public Property Let Bar(ByVal RHS As Double)
     End If
 End Property
 
-Private Sub Class_Initialize()
+Private Sub class_initialize()
     Set This.TestMsgboxCommand = New TestMsgboxCommand
     Set This.Handlers = New Collection
     

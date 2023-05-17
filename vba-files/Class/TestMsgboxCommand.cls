@@ -9,7 +9,7 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 Attribute VB_Description = "Basic test command that does not reference an AppContext, View, nor ViewModel."
 '@ModuleDescription "Basic test command that does not reference an AppContext, View, nor ViewModel."
-'@Folder "Commands"
+'@Folder "MVVM.Commands"
 Option Explicit
 Implements ICommand
 
