@@ -13,11 +13,37 @@ Option Explicit
 Implements IValueConverter
 
 Private Sub IValueConverter_Convert(ByVal Source As Object, ByVal Target As Object)
-    Dim Cities As Scripting.Dictionary
-    Set Cities = Source
-    Dim ListView As ListView
-    Set ListView = Target
+    If Source Is Nothing Then
+        ConvertSelectedItem vbNullString, Target
+    ElseIf TypeOf Source Is Scripting.Dictionary Then
+        ConvertListItems Source, Target
+    Else
+        ConvertSelectedItem Source, Target
+    End If
+End Sub
+
+Private Sub IValueConverter_ConvertBack(ByVal PropertyBinding As IPropertyBinding)
+    Dim SelectedItem As Variant
+    Set SelectedItem = PropertyBinding.Target.SelectedItem
+    Stop
+End Sub
+
+Private Sub ConvertSelectedItem(ByVal SelectedItemKey As String, ByVal ListView As ListView)
+    If SelectedItemKey = vbNullString Then
+        Set ListView.SelectedItem = Nothing
+        Exit Sub
+    End If
     
+    Dim ListItem As ListItem
+    For Each ListItem In ListView.ListItems
+        If ListItem.Key = SelectedItemKey Then
+            Set ListView.SelectedItem = ListItem
+            Exit Sub
+        End If
+    Next ListItem
+End Sub
+
+Private Sub ConvertListItems(ByVal Cities As Scripting.Dictionary, ByVal ListView As ListView)
     Dim Key As Variant
     For Each Key In Cities
         Dim ThisCity As City
@@ -29,10 +55,6 @@ Private Sub IValueConverter_Convert(ByVal Source As Object, ByVal Target As Obje
         ListItem.ListSubItems.Add Text:=ThisCity.Country.Name
         ListItem.ListSubItems.Add Text:=ThisCity.Airport
     Next Key
-End Sub
-
-Private Sub IValueConverter_ConvertBack(ByVal Source As Object, ByVal Target As Object)
-    'noop
 End Sub
 
 Public Sub InitializeListView(ByVal ListView As ListView)

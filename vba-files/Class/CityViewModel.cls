@@ -15,7 +15,7 @@ Implements INotifyPropertyChanged
 Private Type TState
     Notifier As INotifyPropertyChanged
     
-    City As String
+    SelectedCityKey As String
     Cities As Scripting.Dictionary
 End Type
 Private This As TState
@@ -47,18 +47,18 @@ Private Sub Class_Initialize()
 End Sub
 
 '---
-Public Property Get City() As String
-    City = This.City
-End Property
-
-Public Property Let City(ByVal RHS As String)
-    If This.City = RHS Then Exit Property
-    This.City = RHS
-    OnPropertyChanged "City"
-End Property
-
 Public Property Get Cities() As Scripting.Dictionary
     Set Cities = This.Cities
+End Property
+
+Public Property Let SelectedCityKey(ByVal RHS As String)
+    If This.SelectedCityKey = RHS Then Exit Property
+    This.SelectedCityKey = RHS
+    OnPropertyChanged "SelectedCityKey"
+End Property
+
+Public Property Get SelectedCityKey() As String
+    SelectedCityKey = This.SelectedCityKey
 End Property
 
 Private Sub PopulateDefaultData()

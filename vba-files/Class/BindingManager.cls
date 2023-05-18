@@ -100,5 +100,3 @@ End Function
 Private Sub IHandlePropertyChanged_HandlePropertyChanged(ByVal Source As Object, ByVal PropertyName As String)
     This.Context.CommandManager.EvaluateCanExecute Source
 End Sub
-
-

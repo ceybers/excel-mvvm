@@ -125,13 +125,14 @@ End Function
 Private Sub UpdateListViewSelectedItem()
     If DO_DEBUG Then Debug.Print "ListViewPropertyBinding UpdateListViewSelectedItem()"
     
-    Dim vNewValue As String
+    Dim vNewValue As Variant
     vNewValue = CallByName(This.ViewModel, This.SourcePropertyPath, VbGet)
     
     Dim ListItem As ListItem
     For Each ListItem In mListView.ListItems
-        If ListItem.Text = vNewValue Then
-            Set mListView.SelectedItem = ListItem
+        If ListItem.Text = CStr(vNewValue) Then
+            'Set mListView.SelectedItem = ListItem
+            mListView.SelectedItem = ListItem.Key
             Exit Sub
         End If
     Next ListItem
@@ -142,13 +143,13 @@ Private Sub UpdateListViewListItems()
     
     mListView.ListItems.Clear
     
+    Dim NewList As Scripting.Dictionary
+    Set NewList = CallByName(This.ViewModel, This.SourcePropertyPath, VbGet)
+        
     If Not This.ValueConverter Is Nothing Then
-        This.ValueConverter.Convert Source:=CallByName(This.ViewModel, This.SourcePropertyPath, VbGet), Target:=mListView
+        This.ValueConverter.Convert Source:=NewList, Target:=mListView
     Else
         ' TODO Move to Default Value Converter
-        Dim NewList As Scripting.Dictionary
-        Set NewList = CallByName(This.ViewModel, This.SourcePropertyPath, VbGet)
-        
         Dim Key As Variant
         For Each Key In NewList.Keys
             mListView.ListItems.Add Key:=Key, Text:=NewList.Item(Key)
@@ -160,6 +161,11 @@ Private Sub UpdateSource()
     If DO_DEBUG Then Debug.Print "ListViewPropertyBinding UpdateSource()"
     
     Dim vNewValue As Variant
-    vNewValue = CallByName(mListView, This.TargetProperty, VbGet)
-    CallByName This.ViewModel, This.SourcePropertyPath, VbLet, vNewValue
+    Set vNewValue = CallByName(mListView, This.TargetProperty, VbGet)
+    
+    'If Not This.ValueConverter Is Nothing Then
+    '    This.ValueConverter.ConvertBack Me
+    'Else
+        CallByName This.ViewModel, This.SourcePropertyPath, VbLet, vNewValue
+    'End If
 End Sub

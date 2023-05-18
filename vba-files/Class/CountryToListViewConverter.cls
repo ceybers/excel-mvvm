@@ -13,11 +13,28 @@ Option Explicit
 Implements IValueConverter
 
 Private Sub IValueConverter_Convert(ByVal Source As Object, ByVal Target As Object)
-    Dim Countries As Scripting.Dictionary
-    Set Countries = Source
-    Dim ListView As ListView
-    Set ListView = Target
-    
+    If TypeOf Source Is Scripting.Dictionary Then
+        ConvertListItems Source, Target
+    Else
+        ConvertSelectedItem Source, Target
+    End If
+End Sub
+
+Private Sub IValueConverter_ConvertBack(ByVal PropertyBinding As IPropertyBinding) 'ByVal Source As Object, ByVal Target As Object)
+    'noop
+End Sub
+
+Private Sub ConvertSelectedItem(ByVal SelectedItemKey As String, ByVal ListView As ListView)
+    Dim ListItem As ListItem
+    For Each ListItem In ListView.ListItems
+        If ListItem.Key = SelectedItemKey Then
+            Set ListView.SelectedItem = ListItem
+            Exit Sub
+        End If
+    Next ListItem
+End Sub
+
+Private Sub ConvertListItems(ByVal Countries As Scripting.Dictionary, ByVal ListView As ListView)
     Dim Key As Variant
     For Each Key In Countries
         Dim ThisCountry As Country
@@ -27,10 +44,6 @@ Private Sub IValueConverter_Convert(ByVal Source As Object, ByVal Target As Obje
         Dim ListItem As ListItem
         Set ListItem = ListView.ListItems.Add(Key:=ThisCountry.Name, Text:=ThisCountry.Name)
     Next Key
-End Sub
-
-Private Sub IValueConverter_ConvertBack(ByVal Source As Object, ByVal Target As Object)
-    'noop
 End Sub
 
 Public Sub InitializeListView(ByVal ListView As ListView)

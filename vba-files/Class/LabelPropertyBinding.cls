@@ -78,9 +78,10 @@ End Sub
 Private Sub UpdateTarget()
     If CanUpdateTarget Then
         If DO_DEBUG Then Debug.Print "LabelPropertyBinding vm_PropertyChanged()"
-        Dim vNewValue As String
+        Dim vNewValue As Variant
         vNewValue = CallByName(This.ViewModel, This.SourcePropertyPath, VbGet)
-        CallByName mLabel, This.TargetProperty, VbLet, vNewValue
+        'If vNewValue Is Nothing Then vNewValue = vbNullString
+        CallByName mLabel, This.TargetProperty, VbLet, CStr(vNewValue)
     End If
     
     If This.BindingMode = OneTimeBinding Then This.OneTimeBoundCounter = This.OneTimeBoundCounter + 1

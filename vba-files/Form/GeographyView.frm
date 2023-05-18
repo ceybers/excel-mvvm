@@ -1,10 +1,10 @@
 VERSION 5.00
 Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} GeographyView 
    Caption         =   "GeographyView"
-   ClientHeight    =   6600
+   ClientHeight    =   4365
    ClientLeft      =   120
    ClientTop       =   465
-   ClientWidth     =   7485
+   ClientWidth     =   8520.001
    OleObjectBlob   =   "GeographyView.frx":0000
    StartUpPosition =   1  'CenterOwner
 End
@@ -107,9 +107,10 @@ Private Sub BindControls()
         .BindPropertyPath ViewModel, "Country", Me.TextBox1, "Value"
         
         .BindPropertyPath ViewModel, "CityViewModel.Cities", Me.ListView2, "ListItems", OneWayToSource, CitytoListViewConverter
-        .BindPropertyPath ViewModel, "CityViewModel.City", Me.ListView2, "SelectedItem"
-        '.BindPropertyPath ViewModel, "CityViewModel.Cities", Me.ComboBox1, "List"
-        '.BindPropertyPath ViewModel, "CityViewModel.City", Me.ComboBox1, "Value"
+        .BindPropertyPath ViewModel, "CityViewModel.SelectedCityKey", Me.ListView2, "SelectedItem", TwoWayBinding, CitytoListViewConverter
+        .BindPropertyPath ViewModel, "CityViewModel.Cities", Me.ComboBox1, "List", OneWayToSource, CityToComboBoxConverter
+        .BindPropertyPath ViewModel, "CityViewModel.SelectedCityKey", Me.ComboBox1, "Value", TwoWayBinding, CityToComboBoxConverter
+        .BindPropertyPath ViewModel, "CityViewModel.SelectedCityKey", Me.Label2, "Caption"
     End With
 End Sub
 

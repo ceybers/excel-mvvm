@@ -66,6 +66,11 @@ End Property
 Public Sub Resolve()
     Set This.Object = ResolvePropertyPath(This.Context, This.Path)
     This.PropertyName = ResolvePropertyName(This.Path)
+    
+    If Not IsBindingValid Then
+        MsgBox "Invalid binding on type = '" & TypeName(This.Object) & "', property name = '" & This.PropertyName & "'"
+        Stop
+    End If
 End Sub
 
 Private Function ResolvePropertyName(ByVal PropertyPath As String) As String
@@ -94,4 +99,24 @@ Private Function ResolvePropertyPath(ByVal Context As Object, ByVal PropertyPath
         NextPath = Left$(NextPath, Len(NextPath) - Len(Tokens(UBound(Tokens))) - 1)
         Set ResolvePropertyPath = ResolvePropertyPath(NextObject, NextPath)
     End If
+End Function
+
+Private Function IsBindingValid() As Boolean
+    Dim vTest As Variant
+    On Error GoTo ErrHandlerA
+    Set vTest = CallByName(This.Object, This.PropertyName, VbGet)
+    On Error GoTo 0
+    IsBindingValid = True
+    Exit Function
+ErrHandlerA:
+    Err.Clear
+    Dim vTestB As Variant
+    On Error GoTo ErrHandlerB
+    vTestB = CallByName(This.Object, This.PropertyName, VbGet)
+    On Error GoTo 0
+    IsBindingValid = True
+    Exit Function
+ErrHandlerB:
+    'MsgBox "Err " & Err.Number & " - " & Err.Description
+    Err.Clear
 End Function
