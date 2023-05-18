@@ -11,10 +11,12 @@ Attribute VB_Exposed = False
 Option Explicit
 Implements IBindingStrategy
 
-Private Function IBindingStrategy_CreateBinding(ByVal Source As Object, ByVal SourcePropertyPath As String, ByVal Target As Control, Optional ByVal TargetProperty As String) As IPropertyBinding
+Private Function IBindingStrategy_CreateBinding(ByVal Source As Object, ByVal SourcePropertyPath As String, _
+    ByVal Target As Control, Optional ByVal TargetProperty As String, Optional ByVal BindingMode As BindingMode) _
+    As IPropertyBinding
     Dim NewBinding As CommandButtonPropertyBinding
     Set NewBinding = New CommandButtonPropertyBinding
-    NewBinding.Create Source, SourcePropertyPath, Target, TargetProperty
+    NewBinding.Create Source, SourcePropertyPath, Target, TargetProperty, BindingMode
     Set IBindingStrategy_CreateBinding = NewBinding
 End Function
 

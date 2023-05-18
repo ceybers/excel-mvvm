@@ -11,5 +11,7 @@ Attribute VB_Exposed = False
 Option Explicit
 
 Public Function CreateBinding(ByVal Source As Object, ByVal SourcePropertyPath As String, _
-    ByVal Target As Control, Optional ByVal TargetProperty As String) As IPropertyBinding
+    ByVal Target As Control, Optional ByVal TargetProperty As String, Optional ByVal BindingMode As BindingMode) _
+    As IPropertyBinding
+    
 End Function

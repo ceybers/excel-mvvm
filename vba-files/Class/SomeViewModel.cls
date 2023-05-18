@@ -8,7 +8,7 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 '@IgnoreModule ProcedureNotUsed
-'@Folder "MVVM.ViewModels"
+'@Folder "MVVM.Example1"
 Option Explicit
 Implements IViewModel
 Implements INotifyPropertyChanged

@@ -9,7 +9,7 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 Attribute VB_Description = "A Command specific to a type of View."
 '@ModuleDescription "A Command specific to a type of View."
-'@Folder "MVVM.Commands"
+'@Folder "MVVM.Example1"
 Option Explicit
 Implements ICommand
 

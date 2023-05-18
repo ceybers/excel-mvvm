@@ -14,7 +14,7 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 
-'@Folder "MVVM.Views"
+'@Folder "MVVM.Example1"
 Option Explicit
 Implements IView
  

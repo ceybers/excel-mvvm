@@ -7,7 +7,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'@Folder "MVVM.ViewModels"
+'@Folder "MVVM.Example1"
 Option Explicit
 Implements IViewModel
 Implements INotifyPropertyChanged
