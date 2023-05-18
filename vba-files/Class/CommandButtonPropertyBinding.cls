@@ -16,8 +16,8 @@ Implements IHandlePropertyChanged
 Private Const DO_DEBUG As Boolean = False
 
 '@MemberAttribute VB_VarHelpID, -1
-Private WithEvents cmb As MSForms.CommandButton
-Attribute cmb.VB_VarHelpID = -1
+Private WithEvents mCommandButton As MSForms.CommandButton
+Attribute mCommandButton.VB_VarHelpID = -1
 
 Private Type TState
     BindingMode As BindingMode
@@ -41,7 +41,7 @@ Private Property Get IPropertyBinding_SourcePropertyPath() As String
 End Property
 
 Private Property Get IPropertyBinding_Target() As Object
-    Set IPropertyBinding_Target = cmb
+    Set IPropertyBinding_Target = mCommandButton
 End Property
 
 Private Property Get IPropertyBinding_TargetProperty() As String
@@ -51,9 +51,11 @@ End Property
 Public Sub Create(ByVal Source As Object, ByVal SourcePropertyPath As String, ByVal Target As Control, _
     Optional ByVal TargetProperty As String, Optional ByVal BindingMode As BindingMode)
     If DO_DEBUG Then Debug.Print "CommandButtonPropertyBinding Create(vm, "; SourcePropertyPath; ", "; Target.Name; ")"
+    
     Set This.ViewModel = Source
     This.SourcePropertyPath = SourcePropertyPath
-    Set cmb = Target
+    
+    Set mCommandButton = Target
     This.TargetProperty = TargetProperty
     
     This.BindingMode = OneWayBinding
@@ -76,7 +78,7 @@ Private Sub UpdateTarget()
         If DO_DEBUG Then Debug.Print "CommandButtonPropertyBinding cmb_PropertyChanged()"
         Dim vNewValue As String
         vNewValue = CallByName(This.ViewModel, This.SourcePropertyPath, VbGet)
-        CallByName cmb, This.TargetProperty, VbLet, vNewValue
+        CallByName mCommandButton, This.TargetProperty, VbLet, vNewValue
     End If
     
     If This.BindingMode = OneTimeBinding Then This.OneTimeBoundCounter = This.OneTimeBoundCounter + 1
@@ -93,4 +95,5 @@ Private Function CanUpdateTarget() As Boolean
     If This.BindingMode = OneWayBinding Then CanUpdateTarget = True
     If This.BindingMode = OneTimeBinding And This.OneTimeBoundCounter = 0 Then CanUpdateTarget = True
 End Function
+
 

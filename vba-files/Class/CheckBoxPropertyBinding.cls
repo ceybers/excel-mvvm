@@ -16,8 +16,8 @@ Implements IHandlePropertyChanged
 Private Const DO_DEBUG As Boolean = False
 
 '@MemberAttribute VB_VarHelpID, -1
-Private WithEvents cb As MSForms.CheckBox
-Attribute cb.VB_VarHelpID = -1
+Private WithEvents mCheckBox As MSForms.CheckBox
+Attribute mCheckBox.VB_VarHelpID = -1
 
 Private Type TState
     BindingMode As BindingMode
@@ -41,7 +41,7 @@ Private Property Get IPropertyBinding_SourcePropertyPath() As String
 End Property
 
 Private Property Get IPropertyBinding_Target() As Object
-    Set IPropertyBinding_Target = cb
+    Set IPropertyBinding_Target = mCheckBox
 End Property
 
 Private Property Get IPropertyBinding_TargetProperty() As String
@@ -51,9 +51,11 @@ End Property
 Public Sub Create(ByVal Source As Object, ByVal SourcePropertyPath As String, ByVal Target As Control, _
     Optional ByVal TargetProperty As String, Optional ByVal BindingMode As BindingMode)
     If DO_DEBUG Then Debug.Print "CheckBoxPropertyBinding Create(vm, "; SourcePropertyPath; ", "; Target.Name; ")"
+    
     Set This.ViewModel = Source
     This.SourcePropertyPath = SourcePropertyPath
-    Set cb = Target
+    
+    Set mCheckBox = Target
     This.TargetProperty = TargetProperty
     
     If TargetProperty = "Value" Then
@@ -65,7 +67,7 @@ Public Sub Create(ByVal Source As Object, ByVal SourcePropertyPath As String, By
     UpdateTarget
 End Sub
 
-Private Sub cb_Change()
+Private Sub mCheckBox_Change()
     If DO_DEBUG Then Debug.Print "CheckBoxPropertyBinding cb_Change()"
     UpdateSource
 End Sub
@@ -80,7 +82,7 @@ Private Sub UpdateTarget()
     If CanUpdateTarget Then
         Dim vNewValue As String
         vNewValue = CallByName(This.ViewModel, This.SourcePropertyPath, VbGet)
-        CallByName cb, This.TargetProperty, VbLet, vNewValue
+        CallByName mCheckBox, This.TargetProperty, VbLet, vNewValue
     End If
     
     If This.BindingMode = OneTimeBinding Then This.OneTimeBoundCounter = This.OneTimeBoundCounter + 1
@@ -89,7 +91,7 @@ End Sub
 Private Sub UpdateSource()
     If This.BindingMode = TwoWayBinding Or This.BindingMode = OneWayToSource Then
         Dim vNewValue As Variant
-        vNewValue = CallByName(cb, This.TargetProperty, VbGet)
+        vNewValue = CallByName(mCheckBox, This.TargetProperty, VbGet)
         CallByName This.ViewModel, This.SourcePropertyPath, VbLet, vNewValue
     End If
 End Sub
@@ -99,3 +101,4 @@ Private Function CanUpdateTarget() As Boolean
     If This.BindingMode = OneWayBinding Then CanUpdateTarget = True
     If This.BindingMode = OneTimeBinding And This.OneTimeBoundCounter = 0 Then CanUpdateTarget = True
 End Function
+

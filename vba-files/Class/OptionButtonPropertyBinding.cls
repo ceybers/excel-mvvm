@@ -16,8 +16,8 @@ Implements IHandlePropertyChanged
 Private Const DO_DEBUG As Boolean = False
 
 '@MemberAttribute VB_VarHelpID, -1
-Private WithEvents opt As MSForms.OptionButton
-Attribute opt.VB_VarHelpID = -1
+Private WithEvents mOptionButton As MSForms.OptionButton
+Attribute mOptionButton.VB_VarHelpID = -1
 
 Private Type TState
     BindingMode As BindingMode
@@ -41,7 +41,7 @@ Private Property Get IPropertyBinding_SourcePropertyPath() As String
 End Property
 
 Private Property Get IPropertyBinding_Target() As Object
-    Set IPropertyBinding_Target = opt
+    Set IPropertyBinding_Target = mOptionButton
 End Property
 
 Private Property Get IPropertyBinding_TargetProperty() As String
@@ -51,9 +51,13 @@ End Property
 Public Sub Create(ByVal Source As Object, ByVal SourcePropertyPath As String, ByVal Target As Control, _
     Optional ByVal TargetProperty As String, Optional ByVal BindingMode As BindingMode)
     If DO_DEBUG Then Debug.Print "OptionButtonPropertyBinding Create(vm, "; SourcePropertyPath; ", "; Target.Name; ")"
-    Set This.ViewModel = Source
-    This.SourcePropertyPath = SourcePropertyPath
-    Set opt = Target
+    
+    Dim ThisBindingPath As IBindingPath
+    Set ThisBindingPath = BindingPath.Create(Source, SourcePropertyPath)
+    Set This.ViewModel = ThisBindingPath.Object
+    This.SourcePropertyPath = ThisBindingPath.PropertyName
+    
+    Set mOptionButton = Target
     This.TargetProperty = TargetProperty
     
     If TargetProperty = "Value" Then
@@ -65,7 +69,7 @@ Public Sub Create(ByVal Source As Object, ByVal SourcePropertyPath As String, By
     UpdateTarget
 End Sub
 
-Private Sub opt_Change()
+Private Sub mOptionButton_Change()
     If DO_DEBUG Then Debug.Print "OptionButtonPropertyBinding opt_Change()"
     UpdateSource
 End Sub
@@ -80,7 +84,7 @@ Private Sub UpdateTarget()
     If CanUpdateTarget Then
         Dim vNewValue As String
         vNewValue = CallByName(This.ViewModel, This.SourcePropertyPath, VbGet)
-        CallByName opt, This.TargetProperty, VbLet, vNewValue
+        CallByName mOptionButton, This.TargetProperty, VbLet, vNewValue
     End If
     
     If This.BindingMode = OneTimeBinding Then This.OneTimeBoundCounter = This.OneTimeBoundCounter + 1
@@ -89,7 +93,7 @@ End Sub
 Private Sub UpdateSource()
     If This.BindingMode = TwoWayBinding Or This.BindingMode = OneWayToSource Then
         Dim vNewValue As Variant
-        vNewValue = CallByName(opt, This.TargetProperty, VbGet)
+        vNewValue = CallByName(mOptionButton, This.TargetProperty, VbGet)
         CallByName This.ViewModel, This.SourcePropertyPath, VbLet, vNewValue
     End If
 End Sub
@@ -99,3 +103,4 @@ Private Function CanUpdateTarget() As Boolean
     If This.BindingMode = OneWayBinding Then CanUpdateTarget = True
     If This.BindingMode = OneTimeBinding And This.OneTimeBoundCounter = 0 Then CanUpdateTarget = True
 End Function
+

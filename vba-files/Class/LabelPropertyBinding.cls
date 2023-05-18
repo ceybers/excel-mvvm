@@ -16,8 +16,8 @@ Implements IHandlePropertyChanged
 Private Const DO_DEBUG As Boolean = False
 
 '@MemberAttribute VB_VarHelpID, -1
-Private WithEvents lbl As MSForms.Label
-Attribute lbl.VB_VarHelpID = -1
+Private WithEvents mLabel As MSForms.Label
+Attribute mLabel.VB_VarHelpID = -1
 
 Private Type TState
     BindingMode As BindingMode
@@ -41,7 +41,7 @@ Private Property Get IPropertyBinding_SourcePropertyPath() As String
 End Property
 
 Private Property Get IPropertyBinding_Target() As Object
-    Set IPropertyBinding_Target = lbl
+    Set IPropertyBinding_Target = mLabel
 End Property
 
 Private Property Get IPropertyBinding_TargetProperty() As String
@@ -51,9 +51,13 @@ End Property
 Public Sub Create(ByVal Source As Object, ByVal SourcePropertyPath As String, ByVal Target As Control, _
     Optional ByVal TargetProperty As String, Optional ByVal BindingMode As BindingMode)
     If DO_DEBUG Then Debug.Print "LabelPropertyBinding Create(vm, "; SourcePropertyPath; ", "; Target.Name; ")"
-    Set This.ViewModel = Source
-    This.SourcePropertyPath = SourcePropertyPath
-    Set lbl = Target
+    
+    Dim ThisBindingPath As IBindingPath
+    Set ThisBindingPath = BindingPath.Create(Source, SourcePropertyPath)
+    Set This.ViewModel = ThisBindingPath.Object
+    This.SourcePropertyPath = ThisBindingPath.PropertyName
+    
+    Set mLabel = Target
     This.TargetProperty = TargetProperty
     
     This.BindingMode = OneWayBinding
@@ -61,7 +65,7 @@ Public Sub Create(ByVal Source As Object, ByVal SourcePropertyPath As String, By
     UpdateTarget
 End Sub
 
-Private Sub lbl_Click()
+Private Sub mLabel_Click()
     If DO_DEBUG Then Debug.Print "TextBoxPropertyBinding lbl_Click()"
     'UpdateSource
 End Sub
@@ -77,7 +81,7 @@ Private Sub UpdateTarget()
         If DO_DEBUG Then Debug.Print "LabelPropertyBinding vm_PropertyChanged()"
         Dim vNewValue As String
         vNewValue = CallByName(This.ViewModel, This.SourcePropertyPath, VbGet)
-        CallByName lbl, This.TargetProperty, VbLet, vNewValue
+        CallByName mLabel, This.TargetProperty, VbLet, vNewValue
     End If
     
     If This.BindingMode = OneTimeBinding Then This.OneTimeBoundCounter = This.OneTimeBoundCounter + 1
@@ -94,3 +98,4 @@ Private Function CanUpdateTarget() As Boolean
     If This.BindingMode = OneWayBinding Then CanUpdateTarget = True
     If This.BindingMode = OneTimeBinding And This.OneTimeBoundCounter = 0 Then CanUpdateTarget = True
 End Function
+

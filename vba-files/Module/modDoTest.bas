@@ -9,6 +9,25 @@ Public Sub DoTest()
     Dim ctx As IAppContext
     Set ctx = New AppContext
     
+    Dim vm As CountryViewModel
+    Set vm = New CountryViewModel
+    
+    Dim View As IView
+    Set View = GeographyView.Create(ctx, vm)
+    
+    With View
+        If .ShowDialog() Then
+            If DO_DEBUG Then Debug.Print "GeographyView.ShowDialog(vm) returned True"
+        Else
+            If DO_DEBUG Then Debug.Print "GeographyView.ShowDialog(vm) returned False"
+        End If
+    End With
+End Sub
+
+Private Sub DoTestExample1()
+    Dim ctx As IAppContext
+    Set ctx = New AppContext
+    
     Dim vm As SomeViewModel 'IViewModel
     Set vm = GetSampleViewModel(ctx)
     

@@ -54,12 +54,16 @@ Public Sub BindPropertyPath(ByVal Source As Object, ByVal SourcePropertyPath As 
     Set BindingStrategy = This.BindingStrategies.Item(GetFullTypeName(Target))
     On Error GoTo 0
     
+    Dim ThisBindingPath As IBindingPath
+    Set ThisBindingPath = BindingPath.Create(Source, SourcePropertyPath)
+    
     Dim NewBinding As IPropertyBinding
-    Set NewBinding = BindingStrategy.CreateBinding(Source, SourcePropertyPath, Target, TargetProperty, BindingMode)
+    Set NewBinding = BindingStrategy.CreateBinding(ThisBindingPath.Object, ThisBindingPath.PropertyName, _
+        Target, TargetProperty, BindingMode)
     This.PropertyBindings.Add Item:=NewBinding
     
     Dim SourceNotifier As INotifyPropertyChanged
-    Set SourceNotifier = Source
+    Set SourceNotifier = ThisBindingPath.Object
     If Not SourceNotifier Is Nothing And TypeOf NewBinding Is IHandlePropertyChanged Then
         '@Ignore ArgumentWithIncompatibleObjectType
         SourceNotifier.RegisterHandler NewBinding

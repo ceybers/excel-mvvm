@@ -16,8 +16,8 @@ Implements IHandlePropertyChanged
 Private Const DO_DEBUG As Boolean = False
 
 '@MemberAttribute VB_VarHelpID, -1
-Private WithEvents tv As MSComctlLib.TreeView
-Attribute tv.VB_VarHelpID = -1
+Private WithEvents mTreeView As MSComctlLib.TreeView
+Attribute mTreeView.VB_VarHelpID = -1
 
 Private Type TState
     BindingMode As BindingMode
@@ -41,7 +41,7 @@ Private Property Get IPropertyBinding_SourcePropertyPath() As String
 End Property
 
 Private Property Get IPropertyBinding_Target() As Object
-    Set IPropertyBinding_Target = tv
+    Set IPropertyBinding_Target = mTreeView
 End Property
 
 Private Property Get IPropertyBinding_TargetProperty() As String
@@ -51,9 +51,13 @@ End Property
 Public Sub Create(ByVal Source As Object, ByVal SourcePropertyPath As String, ByVal Target As Control, _
     Optional ByVal TargetProperty As String, Optional ByVal BindingMode As BindingMode)
     If DO_DEBUG Then Debug.Print "TreeViewPropertyBinding Create(vm, "; SourcePropertyPath; ", "; Target.Name; ")"
-    Set This.ViewModel = Source
-    This.SourcePropertyPath = SourcePropertyPath
-    Set tv = Target
+    
+    Dim ThisBindingPath As IBindingPath
+    Set ThisBindingPath = BindingPath.Create(Source, SourcePropertyPath)
+    Set This.ViewModel = ThisBindingPath.Object
+    This.SourcePropertyPath = ThisBindingPath.PropertyName
+    
+    Set mTreeView = Target
     This.TargetProperty = TargetProperty
     
     If TargetProperty = "SelectedItem" Then
@@ -65,7 +69,7 @@ Public Sub Create(ByVal Source As Object, ByVal SourcePropertyPath As String, By
     UpdateTarget
 End Sub
 
-Private Sub tv_NodeClick(ByVal Node As MSComctlLib.Node)
+Private Sub mTreeView_NodeClick(ByVal Node As MSComctlLib.Node)
     If DO_DEBUG Then Debug.Print "TreeViewPropertyBinding tv_NodeClick()"
     UpdateSource
 End Sub
@@ -95,7 +99,7 @@ Private Sub UpdateSource()
     If This.BindingMode = TwoWayBinding Or This.BindingMode = OneWayToSource Then
         If This.TargetProperty = "SelectedItem" Then
             Dim SelectedNode As Node
-            Set SelectedNode = CallByName(tv, This.TargetProperty, VbGet)
+            Set SelectedNode = CallByName(mTreeView, This.TargetProperty, VbGet)
             Debug.Assert Not SelectedNode Is Nothing
             CallByName This.ViewModel, This.SourcePropertyPath, VbLet, SelectedNode.Text
         Else
@@ -115,9 +119,9 @@ Private Sub UpdateTreeViewSelectedItem()
     vNewValue = CallByName(This.ViewModel, This.SourcePropertyPath, VbGet)
     
     Dim Node As Node
-    For Each Node In tv.Nodes
+    For Each Node In mTreeView.Nodes
         If Node.Text = vNewValue Then
-            Set tv.SelectedItem = Node
+            Set mTreeView.SelectedItem = Node
             Exit Sub
         End If
     Next Node
@@ -126,13 +130,14 @@ End Sub
 Private Sub UpdateTreeViewNodes()
     If DO_DEBUG Then Debug.Print "TreeViewPropertyBinding UpdateTreeViewNodes()"
     
-    tv.Nodes.Clear
+    mTreeView.Nodes.Clear
     
     Dim NewList As Scripting.Dictionary
     Set NewList = CallByName(This.ViewModel, This.SourcePropertyPath, VbGet)
     
     Dim Key As Variant
     For Each Key In NewList.Keys
-        tv.Nodes.Add Key:=Key, Text:=NewList.Item(Key)
+        mTreeView.Nodes.Add Key:=Key, Text:=NewList.Item(Key)
     Next Key
 End Sub
+

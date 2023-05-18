@@ -16,8 +16,8 @@ Implements IHandlePropertyChanged
 Private Const DO_DEBUG As Boolean = False
 
 '@MemberAttribute VB_VarHelpID, -1
-Private WithEvents cbo As MSForms.ComboBox
-Attribute cbo.VB_VarHelpID = -1
+Private WithEvents mComboBox As MSForms.ComboBox
+Attribute mComboBox.VB_VarHelpID = -1
 
 Private Type TState
     BindingMode As BindingMode
@@ -41,7 +41,7 @@ Private Property Get IPropertyBinding_SourcePropertyPath() As String
 End Property
 
 Private Property Get IPropertyBinding_Target() As Object
-    Set IPropertyBinding_Target = cbo
+    Set IPropertyBinding_Target = mComboBox
 End Property
 
 Private Property Get IPropertyBinding_TargetProperty() As String
@@ -51,9 +51,11 @@ End Property
 Public Sub Create(ByVal Source As Object, ByVal SourcePropertyPath As String, ByVal Target As Control, _
     Optional ByVal TargetProperty As String, Optional ByVal BindingMode As BindingMode)
     If DO_DEBUG Then Debug.Print "ComboBoxPropertyBinding Create(vm, "; SourcePropertyPath; ", "; Target.Name; ")"
+    
     Set This.ViewModel = Source
     This.SourcePropertyPath = SourcePropertyPath
-    Set cbo = Target
+    
+    Set mComboBox = Target
     This.TargetProperty = TargetProperty
     
     If TargetProperty = "Value" Then
@@ -65,7 +67,7 @@ Public Sub Create(ByVal Source As Object, ByVal SourcePropertyPath As String, By
     UpdateTarget
 End Sub
 
-Private Sub cbo_Change()
+Private Sub mComboBox_Change()
     If DO_DEBUG Then Debug.Print "ComboBoxPropertyBinding cbo_Change()"
     UpdateSource
 End Sub
@@ -94,7 +96,7 @@ End Sub
 Private Sub UpdateSource()
     If This.BindingMode = TwoWayBinding Or This.BindingMode = OneWayToSource Then
         Dim vNewValue As Variant
-        vNewValue = CallByName(cbo, This.TargetProperty, VbGet)
+        vNewValue = CallByName(mComboBox, This.TargetProperty, VbGet)
         CallByName This.ViewModel, This.SourcePropertyPath, VbLet, vNewValue
     End If
 End Sub
@@ -108,19 +110,20 @@ End Function
 Private Sub UpdateComboBoxSelected()
     Dim vNewValue As String
     vNewValue = CallByName(This.ViewModel, This.SourcePropertyPath, VbGet)
-    CallByName cbo, This.TargetProperty, VbLet, vNewValue
+    CallByName mComboBox, This.TargetProperty, VbLet, vNewValue
 End Sub
 
 Private Sub UpdateComboBoxList()
     If DO_DEBUG Then Debug.Print "ComboBoxPropertyBinding UpdateComboBoxList()"
     
-    cbo.Clear
+    mComboBox.Clear
     
     Dim NewList As Scripting.Dictionary
     Set NewList = CallByName(This.ViewModel, This.SourcePropertyPath, VbGet)
     
     Dim Key As Variant
     For Each Key In NewList.Keys
-        cbo.AddItem NewList.Item(Key)
+        mComboBox.AddItem NewList.Item(Key)
     Next Key
 End Sub
+

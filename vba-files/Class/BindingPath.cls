@@ -78,7 +78,10 @@ Private Function ResolvePropertyPath(ByVal Context As Object, ByVal PropertyPath
     Dim Tokens() As String
     Tokens = Split(PropertyPath, ".")
     
-    If UBound(Tokens) < 2 Then
+    If UBound(Tokens) = 0 Then
+        Set ResolvePropertyPath = Context
+        Exit Function
+    ElseIf UBound(Tokens) = 1 Then
         Set ResolvePropertyPath = CallByName(Context, Tokens(0), VbGet)
         Exit Function
     Else
