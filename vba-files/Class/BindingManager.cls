@@ -15,6 +15,7 @@ Private Type TBindingManager
     Context As IAppContext
     PropertyBindings As Collection
     BindingStrategies As Scripting.Dictionary
+    HandledViewModels As Scripting.Dictionary
 End Type
 Private This As TBindingManager
 
@@ -31,6 +32,8 @@ Private Sub Class_Initialize()
     
     Set This.BindingStrategies = New Scripting.Dictionary
     InitializeBindingStrategies
+    
+    Set This.HandledViewModels = New Scripting.Dictionary
 End Sub
 
 Private Sub InitializeBindingStrategies()
@@ -70,13 +73,18 @@ Public Sub BindPropertyPath(ByVal Source As Object, ByVal SourcePropertyPath As 
         SourceNotifier.RegisterHandler NewBinding
     End If
     
-    'If TypeOf Source Is INotifyPropertyChanged Then
-    '    Dim Notifier As INotifyPropertyChanged
-    '    Set Notifier = Source
-    '    Notifier.RegisterHandler
-    'End If
-    Exit Sub
+    If TypeOf ThisBindingPath.Object Is INotifyPropertyChanged Then
+        Dim SourceTypeName As String
+        SourceTypeName = TypeName(ThisBindingPath.Object)
+        If Not This.HandledViewModels.Exists(SourceTypeName) Then
+            Dim Notifier As INotifyPropertyChanged
+            Set Notifier = ThisBindingPath.Object
+            Notifier.RegisterHandler Me
+            This.HandledViewModels.Add Key:=SourceTypeName, Item:=SourceTypeName
+        End If
+    End If
     
+    Exit Sub
 NoStrategyFound:
     Err.Clear
     MsgBox "This control hasn't been implemented yet." & vbCrLf & GetFullTypeName(Target)

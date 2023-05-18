@@ -7,10 +7,11 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'@Folder "MVVM.Example2"
+'@Folder "MVVM.Example2.ViewModel"
 Option Explicit
 Implements IViewModel
 Implements INotifyPropertyChanged
+'Implements IHandlePropertyChanged
 
 Private Type TState
     Notifier As INotifyPropertyChanged
@@ -23,7 +24,11 @@ End Type
 Private This As TState
 
 Private Function IViewModel_IsValid() As Boolean
-    IViewModel_IsValid = True
+    Dim TryGetSelectedCity As City
+    Set TryGetSelectedCity = This.CityViewModel.GetSelectedCity
+    If TryGetSelectedCity Is Nothing Then Exit Function
+    
+    If TryGetSelectedCity.Country.Name = This.Country Then IViewModel_IsValid = True
 End Function
 
 Private Function IViewModel_Self() As IViewModel
@@ -83,4 +88,15 @@ Private Sub PopulateDefaultData()
 
     Set This.CityViewModel = New CityViewModel
     This.CityViewModel.Load WorldModel
+    
+    'Dim Notifier As INotifyPropertyChanged
+    'Set Notifier = This.CityViewModel
+    'This.Notifier.RegisterHandler Me
+    
 End Sub
+
+'Private Sub IHandlePropertyChanged_HandlePropertyChanged(ByVal Source As Object, ByVal PropertyName As String)
+'    Debug.Print "IHandlePropertyChanged_HandlePropertyChanged = "; TypeName(Source); "::"; PropertyName
+    'Stop
+     'INotifyPropertyChanged_OnPropertyChanged Source, PropertyName
+'End Sub

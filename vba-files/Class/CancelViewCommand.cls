@@ -2,7 +2,7 @@ VERSION 1.0 CLASS
 BEGIN
   MultiUse = -1  'True
 END
-Attribute VB_Name = "OKViewCommand"
+Attribute VB_Name = "CancelViewCommand"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
@@ -12,7 +12,7 @@ Attribute VB_Exposed = False
 Option Explicit
 Implements ICommand
 
-Private mView As IView
+Private mView As ICancellable
 Private mAppContext As IAppContext
 Private mViewModel As IViewModel
 
@@ -41,13 +41,13 @@ Public Property Set ViewModel(ByVal vNewValue As IViewModel)
 End Property
 
 Private Property Get ICommand_Caption() As String
-    ICommand_Caption = "OK"
+    ICommand_Caption = "Cancel"
 End Property
 
 Public Function Create(ByVal Context As IAppContext, ByVal View As IView, ByVal ViewModel As IViewModel) _
-    As OKViewCommand
-    Dim Result As OKViewCommand
-    Set Result = New OKViewCommand
+    As CancelViewCommand
+    Dim Result As CancelViewCommand
+    Set Result = New CancelViewCommand
     With Result
         Set .Context = Context
         Set .View = View
@@ -57,9 +57,10 @@ Public Function Create(ByVal Context As IAppContext, ByVal View As IView, ByVal 
 End Function
 
 Private Function ICommand_CanExecute() As Boolean
-    ICommand_CanExecute = mViewModel.IsValid
+    ICommand_CanExecute = True
 End Function
 
 Private Sub ICommand_Execute()
-    mView.Hide
+    Debug.Print "CancelViewCommand executing"
+    mView.OnCancel
 End Sub

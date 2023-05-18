@@ -13,7 +13,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
-'@Folder "MVVM.Example2"
+'@Folder "MVVM.Example2.View"
 Option Explicit
 Implements IView
 Implements ICancellable
@@ -110,7 +110,8 @@ Private Sub BindControls()
         .BindPropertyPath ViewModel, "CityViewModel.SelectedCityKey", Me.ListView2, "SelectedItem", TwoWayBinding, CitytoListViewConverter
         .BindPropertyPath ViewModel, "CityViewModel.Cities", Me.ComboBox1, "List", OneWayToSource, CityToComboBoxConverter
         .BindPropertyPath ViewModel, "CityViewModel.SelectedCityKey", Me.ComboBox1, "Value", TwoWayBinding, CityToComboBoxConverter
-        .BindPropertyPath ViewModel, "CityViewModel.SelectedCityKey", Me.Label2, "Caption"
+        
+        '.BindPropertyPath ViewModel, "CityViewModel.SelectedCityKey", Me.Label2, "Caption"
     End With
 End Sub
 
@@ -118,8 +119,12 @@ Private Sub BindCommands()
     Dim OKView As ICommand
     Set OKView = OKViewCommand.Create(Context, Me, ViewModel)
     
+    Dim CancelView As ICommand
+    Set CancelView = CancelViewCommand.Create(Context, Me, ViewModel)
+    
     With This.Context.CommandManager
         .BindCommand Context, ViewModel, OKView, Me.cmbOK
+        .BindCommand Context, ViewModel, CancelView, Me.cmbCancel
     End With
 End Sub
 

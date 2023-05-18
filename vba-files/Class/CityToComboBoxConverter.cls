@@ -8,7 +8,7 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 '@PredeclaredId
-'@Folder("MVVM.Example2")
+'@Folder "MVVM.Example2.Converters"
 Option Explicit
 Implements IValueConverter
 
@@ -49,5 +49,4 @@ Public Sub InitializeListView(ByVal ComboBox As ComboBox)
         .Clear
     End With
 End Sub
-
 

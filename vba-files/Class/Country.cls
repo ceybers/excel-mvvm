@@ -7,7 +7,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'@Folder("MVVM.Example2")
+'@Folder "MVVM.Example2.Model"
 Option Explicit
 
 Private Type TState

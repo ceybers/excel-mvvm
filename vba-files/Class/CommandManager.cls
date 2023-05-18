@@ -23,11 +23,8 @@ End Sub
 Public Function BindCommand(ByVal Context As IAppContext, ByVal ViewModel As IViewModel, ByVal Command As ICommand, _
     ByVal Control As Object) As ICommandBinding
     Dim NewBinding As CommandBinding
-    Set NewBinding = New CommandBinding
-    
-    NewBinding.Create Context, ViewModel, Command, Control
+    Set NewBinding = CommandBinding.Create(Context, ViewModel, Command, Control)
     This.Commands.Add Item:=NewBinding
-    
     Set BindCommand = NewBinding
 End Function
 

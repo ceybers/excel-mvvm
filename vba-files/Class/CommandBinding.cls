@@ -5,52 +5,87 @@ END
 Attribute VB_Name = "CommandBinding"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
-Attribute VB_PredeclaredId = False
+Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
+'@PredeclaredId
 '@Folder MVVM.Infrastructure.Bindings.CommandBindings
 Option Explicit
 Implements ICommandBinding
 
 Private Const DO_DEBUG As Boolean = False
 
-Private mAppContext As IAppContext
-Private mSource As IViewModel
-'@MemberAttribute VB_VarHelpID, -1
-Private mCommand As ICommand
-Attribute mCommand.VB_VarHelpID = -1
 '@MemberAttribute VB_VarHelpID, -1
 Private WithEvents mTarget As MSForms.CommandButton
 Attribute mTarget.VB_VarHelpID = -1
 
+Private Type TCommandBinding
+    AppContext As IAppContext
+    Source As IViewModel
+    Command As ICommand
+End Type
+Private This As TCommandBinding
+
 Private Property Get ICommandBinding_Context() As IAppContext
-    Set ICommandBinding_Context = mAppContext
+    Set ICommandBinding_Context = This.AppContext
 End Property
 
 Private Property Get ICommandBinding_Source() As IViewModel
-    Set ICommandBinding_Source = mSource
+    Set ICommandBinding_Source = This.Source
 End Property
 
 Private Property Get ICommandBinding_Command() As ICommand
-    Set ICommandBinding_Command = mCommand
+    Set ICommandBinding_Command = This.Command
 End Property
 
 Private Property Get ICommandBinding_Target() As Object
     Set ICommandBinding_Target = mTarget
 End Property
 
-Public Sub Create(ByVal AppContext As IAppContext, ByVal Source As IViewModel, ByVal Command As ICommand, ByVal Target As MSForms.CommandButton)
-    Set mAppContext = AppContext
-    Set mSource = Source
-    Set mCommand = Command
+Public Property Get AppContext() As IAppContext
+    Set AppContext = This.AppContext
+End Property
+
+Public Property Set AppContext(ByVal vNewValue As IAppContext)
+    Set This.AppContext = vNewValue
+End Property
+
+Public Property Get Source() As IViewModel
+    Set Source = This.Source
+End Property
+
+Public Property Set Source(ByVal vNewValue As IViewModel)
+    Set This.Source = vNewValue
+End Property
+
+Public Property Get Command() As ICommand
+    Set Command = This.Command
+End Property
+
+Public Property Set Command(ByVal vNewValue As ICommand)
+    Set This.Command = vNewValue
+End Property
+
+Public Sub SetTarget(ByVal Target As Object)
     Set mTarget = Target
-    
-    mTarget.Caption = mCommand.Caption
-    mTarget.Enabled = mCommand.CanExecute
+    mTarget.Caption = This.Command.Caption
+    mTarget.Enabled = This.Command.CanExecute
 End Sub
+
+Public Function Create(ByVal AppContext As IAppContext, ByVal Source As IViewModel, ByVal Command As ICommand, ByVal Target As MSForms.CommandButton) As ICommandBinding
+    Dim NewBinding As CommandBinding
+    Set NewBinding = New CommandBinding
+    With NewBinding
+        Set .AppContext = AppContext
+        Set .Source = Source
+        Set .Command = Command
+        .SetTarget Target
+    End With
+    Set Create = NewBinding
+End Function
 
 Private Sub mTarget_Click()
     If DO_DEBUG Then Debug.Print "CommandBinding mTarget_Click()"
-    mCommand.Execute
+    This.Command.Execute
 End Sub
 
 ' Cannot RaiseEvents at ICommand interface from the concrete class TestMsgBoxCommand etc.
@@ -68,6 +103,5 @@ Private Sub ICommandBinding_EvaluateCanExecute(ByVal Context As Object)
 End Sub
 
 Private Sub EvaluateCanExecute(ByVal Context As Object)
-    mTarget.Enabled = mCommand.CanExecute
+    mTarget.Enabled = This.Command.CanExecute
 End Sub
-

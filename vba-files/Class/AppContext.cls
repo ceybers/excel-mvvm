@@ -30,3 +30,7 @@ Private Sub Class_Initialize()
     Set This.BindingManager.Context = Me
     Set This.CommandManager = New CommandManager
 End Sub
+
+Public Sub RegisterViewModel(ByVal ViewModel As INotifyPropertyChanged)
+    ViewModel.RegisterHandler This.BindingManager
+End Sub

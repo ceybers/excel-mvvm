@@ -7,7 +7,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'@Folder "MVVM.Example2"
+'@Folder "MVVM.Example2.ViewModel"
 Option Explicit
 Implements IViewModel
 Implements INotifyPropertyChanged
@@ -80,3 +80,10 @@ Public Sub Load(ByVal WorldModel As WorldModel)
         This.Cities.Add Key:=Cities(i).Name, Item:=Cities(i)
     Next i
 End Sub
+
+Public Function GetSelectedCity() As City
+    If This.Cities.Exists(This.SelectedCityKey) Then
+        Set GetSelectedCity = This.Cities.Item(This.SelectedCityKey)
+        Exit Function
+   End If
+End Function
