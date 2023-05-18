@@ -52,10 +52,8 @@ Public Sub Create(ByVal Source As Object, ByVal SourcePropertyPath As String, By
     Optional ByVal TargetProperty As String, Optional ByVal BindingMode As BindingMode)
     If DO_DEBUG Then Debug.Print "TextBoxPropertyBinding Create(vm, "; SourcePropertyPath; ", "; Target.Name; ")"
     
-    Dim ThisBindingPath As IBindingPath
-    Set ThisBindingPath = BindingPath.Create(Source, SourcePropertyPath)
-    Set This.ViewModel = ThisBindingPath.Object
-    This.SourcePropertyPath = ThisBindingPath.PropertyName
+    Set This.ViewModel = Source
+    This.SourcePropertyPath = SourcePropertyPath
     
     Set mTextBox = Target
     This.TargetProperty = TargetProperty
