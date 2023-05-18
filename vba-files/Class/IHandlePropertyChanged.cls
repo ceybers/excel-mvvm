@@ -6,7 +6,7 @@ Attribute VB_Name = "IHandlePropertyChanged"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
-Attribute VB_Exposed = True
+Attribute VB_Exposed = False
 '@Interface
 '@Folder MVVM.Infrastructure.Abstract
 Option Explicit

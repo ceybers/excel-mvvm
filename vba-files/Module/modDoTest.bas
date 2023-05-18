@@ -9,14 +9,28 @@ Public Sub DoTest()
     Dim ctx As IAppContext
     Set ctx = New AppContext
     
-    Dim View As IView
-    Set View = New ExampleView
-    
     Dim vm As SomeViewModel 'IViewModel
     Set vm = GetSampleViewModel(ctx)
-
+    
+    Dim inpc As INotifyPropertyChanged
+    Set inpc = vm
+    inpc.RegisterHandler ctx.BindingManager
+    
+    Dim View As IView
+    Set View = ExampleView.Create(ctx, vm)
+    
+    'View.Hide
+    'View.Show
+    'View.ShowDialog
+    'View.ViewModel
+    
+    'Dim ic As ICancellable
+    'Set ic = View
+    'ic.IsCancelled
+    'ic.OnCancel
+    
     With View
-        If .ShowDialog(vm) Then
+        If .ShowDialog() Then
             If DO_DEBUG Then Debug.Print "View.ShowDialog(vm) returned True"
         Else
             If DO_DEBUG Then Debug.Print "View.ShowDialog(vm) returned False"

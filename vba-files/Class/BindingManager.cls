@@ -9,12 +9,22 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 '@Folder MVVM.Infrastructure.Bindings
 Option Explicit
+Implements IHandlePropertyChanged
 
 Private Type TBindingManager
+    Context As IAppContext
     PropertyBindings As Collection
     BindingStrategies As Scripting.Dictionary
 End Type
 Private This As TBindingManager
+
+Public Property Get Context() As IAppContext
+    Set Context = This.Context
+End Property
+
+Friend Property Set Context(ByVal vNewValue As IAppContext)
+    Set This.Context = vNewValue
+End Property
 
 Private Sub Class_Initialize()
     Set This.PropertyBindings = New Collection
@@ -51,9 +61,15 @@ Public Sub BindPropertyPath(ByVal Source As Object, ByVal SourcePropertyPath As 
     Dim SourceNotifier As INotifyPropertyChanged
     Set SourceNotifier = Source
     If Not SourceNotifier Is Nothing And TypeOf NewBinding Is IHandlePropertyChanged Then
+        '@Ignore ArgumentWithIncompatibleObjectType
         SourceNotifier.RegisterHandler NewBinding
     End If
     
+    'If TypeOf Source Is INotifyPropertyChanged Then
+    '    Dim Notifier As INotifyPropertyChanged
+    '    Set Notifier = Source
+    '    Notifier.RegisterHandler
+    'End If
     Exit Sub
     
 NoStrategyFound:
@@ -75,3 +91,9 @@ Private Function GetFullTypeName(ByVal Target As Control) As String
             End If
     End Select
 End Function
+
+Private Sub IHandlePropertyChanged_HandlePropertyChanged(ByVal Source As Object, ByVal PropertyName As String)
+    This.Context.CommandManager.EvaluateCanExecute Source
+End Sub
+
+

@@ -28,5 +28,12 @@ Private Sub INotifyPropertyChanged_OnPropertyChanged(ByVal Source As Object, ByV
 End Sub
 
 Private Sub INotifyPropertyChanged_RegisterHandler(ByVal Handler As IHandlePropertyChanged)
+    Dim ThisHandler As IHandlePropertyChanged
+    For Each ThisHandler In This.Handlers
+        If ThisHandler Is Handler Then
+            Exit Sub
+        End If
+    Next ThisHandler
+    
     This.Handlers.Add Handler
 End Sub

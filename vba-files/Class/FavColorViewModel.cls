@@ -13,7 +13,7 @@ Implements IViewModel
 Implements INotifyPropertyChanged
 
 Private Type TState
-    AppContext As AppContext
+    'AppContext As AppContext
     Notifier As INotifyPropertyChanged
     
     FavoriteColor As String
@@ -39,20 +39,6 @@ End Property
 
 Public Property Get FavoriteColors() As Scripting.Dictionary
     Set FavoriteColors = This.FavoriteColors
-End Property
-
-'Public Property Set FavoriteColors(ByVal RHS As Collection)
-'    Set This.FavoriteColors = RHS
-'End Property
-
-Public Property Get Context() As IAppContext
-    Set Context = This.AppContext
-End Property
-
-Public Property Set Context(ByVal vNewValue As IAppContext)
-    Set This.AppContext = vNewValue
-    
-    Set This.FavFoodViewModel.Context = vNewValue
 End Property
 
 Private Sub Class_Initialize()

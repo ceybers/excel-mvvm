@@ -27,5 +27,6 @@ End Property
 
 Private Sub Class_Initialize()
     Set This.BindingManager = New BindingManager
+    Set This.BindingManager.Context = Me
     Set This.CommandManager = New CommandManager
 End Sub

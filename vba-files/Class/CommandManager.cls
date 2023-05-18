@@ -9,6 +9,7 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 '@Folder MVVM.Infrastructure.Bindings.CommandBindings
 Option Explicit
+Implements IHandlePropertyChanged
 
 Private Type TBindingManager
     Commands As Collection
@@ -19,9 +20,26 @@ Private Sub Class_Initialize()
     Set This.Commands = New Collection
 End Sub
 
-Public Sub BindCommand(ByVal Context As IAppContext, ByVal ViewModel As IViewModel, ByVal Command As ICommand, ByVal Control As Object)
+Public Function BindCommand(ByVal Context As IAppContext, ByVal ViewModel As IViewModel, ByVal Command As ICommand, _
+    ByVal Control As Object) As ICommandBinding
     Dim NewBinding As CommandBinding
     Set NewBinding = New CommandBinding
+    
     NewBinding.Create Context, ViewModel, Command, Control
     This.Commands.Add Item:=NewBinding
+    
+    Set BindCommand = NewBinding
+End Function
+
+Public Sub EvaluateCanExecute(ByVal Context As Object)
+    Dim Binding As ICommandBinding
+    For Each Binding In This.Commands
+        Binding.EvaluateCanExecute Context
+    Next
 End Sub
+
+Private Sub IHandlePropertyChanged_HandlePropertyChanged(ByVal Source As Object, ByVal PropertyName As String)
+    EvaluateCanExecute Source
+End Sub
+
+

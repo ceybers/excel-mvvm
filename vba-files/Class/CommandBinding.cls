@@ -62,3 +62,12 @@ End Sub
 'Private Sub mCommand_Executed()
 '    If DO_DEBUG Then Debug.Print "CommandBinding cmd_Executed()"
 'End Sub
+
+Private Sub ICommandBinding_EvaluateCanExecute(ByVal Context As Object)
+    EvaluateCanExecute Context
+End Sub
+
+Private Sub EvaluateCanExecute(ByVal Context As Object)
+    mTarget.Enabled = mCommand.CanExecute
+End Sub
+

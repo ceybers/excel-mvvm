@@ -14,7 +14,7 @@ Implements IViewModel
 Implements INotifyPropertyChanged
 
 Private Type TState
-    AppContext As AppContext
+    'AppContext As AppContext
     Notifier As INotifyPropertyChanged
     
     FirstName As String
@@ -56,14 +56,14 @@ Public Property Set TestMsgboxCommand(ByVal vNewValue As ICommand)
     Set This.TestMsgboxCommand = vNewValue
 End Property
 
-Public Property Get Context() As IAppContext
-    Set Context = This.AppContext
-End Property
+'Public Property Get Context() As IAppContext
+'    Set Context = This.AppContext
+'End Property
 
-Public Property Set Context(ByVal vNewValue As IAppContext)
-    Set This.AppContext = vNewValue
-    Set This.FavColorViewModel.Context = vNewValue
-End Property
+'Public Property Set Context(ByVal vNewValue As IAppContext)
+'    Set This.AppContext = vNewValue
+'    Set This.FavColorViewModel.Context = vNewValue
+'End Property
 
 Public Property Get IsFoobar() As Boolean
     IsFoobar = This.IsFoobar
@@ -168,7 +168,7 @@ Private Sub Class_Initialize()
 End Sub
 
 Private Function IViewModel_IsValid() As Boolean
-    IViewModel_IsValid = True
+    IViewModel_IsValid = (This.FirstName = "Bob")
 End Function
 
 Private Function IViewModel_Self() As IViewModel
@@ -234,7 +234,7 @@ End Sub
 Public Sub InitializeCommands()
     Dim TestVMCmd As TestVMSubCommand
     Set TestVMCmd = New TestVMSubCommand
-    Set TestVMCmd.Context = This.AppContext
+    'Set TestVMCmd.Context = This.AppContext
     Set TestVMCmd.ViewModel = Me
     Set This.TestDoCmdCommand = TestVMCmd
 End Sub

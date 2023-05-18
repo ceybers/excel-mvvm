@@ -26,3 +26,8 @@ End Property
 Public Property Get Target() As Object
 Attribute Target.VB_Description = "The UserForm Control that will be bound to the ViewModel's Property."
 End Property
+
+'@Description "Evaluates whether the command can execute given the binding context."
+Public Sub EvaluateCanExecute(ByVal Context As Object)
+Attribute EvaluateCanExecute.VB_Description = "Evaluates whether the command can execute given the binding context."
+End Sub

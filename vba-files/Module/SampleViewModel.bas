@@ -4,7 +4,6 @@ Option Explicit
 
 Public Function GetSampleViewModel(ByVal Context As IAppContext) As SomeViewModel
     With New SomeViewModel
-        Set .Context = Context
         .FirstName = "John"
         .LastName = "Doe"
         .DateOfBirth = DateSerial(1984, 1, 1)

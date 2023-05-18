@@ -7,6 +7,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
+'@IgnoreModule
 
 'namespace=xvba_modules\Xdebug
 
@@ -49,7 +50,7 @@ Public errorTitle As String
 '*/
 Public vbaDebugPrintActive As Boolean
 
-Private Sub class_initialize()
+Private Sub Class_Initialize()
 
      Dim fso  As Object
      Set fso = CreateObject("Scripting.FileSystemObject")

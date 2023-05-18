@@ -17,28 +17,34 @@ Attribute VB_Exposed = False
 '@Folder "MVVM.Example1"
 Option Explicit
 Implements IView
+Implements ICancellable
  
 Private Type TView
+    Context As IAppContext
     IsCancelled As Boolean
     ViewModel As SomeViewModel
 End Type
 Private This As TView
 
-Private Sub cmbTest_Click()
-    This.ViewModel.DebugPrint
-End Sub
+Private Property Get IView_ViewModel() As Object
+    Set IView_ViewModel = This.ViewModel
+End Property
 
-Private Sub cmdSetNameToBob_Click()
-    This.ViewModel.FirstName = "Bob"
-End Sub
+Public Property Get ViewModel() As SomeViewModel
+    Set ViewModel = This.ViewModel
+End Property
 
-Private Sub OkButton_Click()
-    Me.Hide
-End Sub
- 
-Private Sub CancelButton_Click()
-    OnCancel
-End Sub
+Public Property Set ViewModel(ByVal vNewValue As SomeViewModel)
+    Set This.ViewModel = vNewValue
+End Property
+
+Public Property Get Context() As IAppContext
+    Set Context = This.Context
+End Property
+
+Public Property Set Context(ByVal vNewValue As IAppContext)
+    Set This.Context = vNewValue
+End Property
  
 Private Sub UserForm_QueryClose(Cancel As Integer, CloseMode As Integer)
     If CloseMode = VbQueryClose.vbFormControlMenu Then
@@ -51,10 +57,34 @@ Private Sub OnCancel()
     This.IsCancelled = True
     Me.Hide
 End Sub
+
+Private Property Get ICancellable_IsCancelled() As Boolean
+    ICancellable_IsCancelled = This.IsCancelled
+End Property
+
+Private Sub ICancellable_OnCancel()
+    OnCancel
+End Sub
+
+Private Sub IView_Show()
+    IView_ShowDialog
+End Sub
  
-Private Function IView_ShowDialog(ByVal ViewModel As Object) As Boolean
-    Set This.ViewModel = ViewModel
+Private Sub IView_Hide()
+    Me.Hide
+End Sub
+
+Public Function Create(ByVal Context As IAppContext, ByVal ViewModel As SomeViewModel) As IView
+    Dim Result As ExampleView
+    Set Result = New ExampleView
     
+    Set Result.Context = Context
+    Set Result.ViewModel = ViewModel
+
+    Set Create = Result
+End Function
+
+Private Function IView_ShowDialog() As Boolean
     InitializeControls
     BindControls
     BindCommands
@@ -66,50 +96,66 @@ End Function
 
 Private Sub InitializeControls()
     '@Ignore ArgumentWithIncompatibleObjectType
-    This.ViewModel.InitializeListViewSize Me.lvSize
+    ViewModel.InitializeListViewSize Me.lvSize
     '@Ignore ArgumentWithIncompatibleObjectType
-    This.ViewModel.InitializeTreeViewSize Me.tvSize
+    ViewModel.InitializeTreeViewSize Me.tvSize
 End Sub
 
 Private Sub BindControls()
-    With This.ViewModel.Context.BindingManager
-        .BindPropertyPath This.ViewModel, "FirstName", Me.txtFirstname, "Value"
+    With Context.BindingManager
+        .BindPropertyPath ViewModel, "FirstName", Me.txtFirstname, "Value"
         
-        .BindPropertyPath This.ViewModel, "LastName", Me.lblFirstName, "Caption"
+        .BindPropertyPath ViewModel, "LastName", Me.lblFirstName, "Caption"
         
-        .BindPropertyPath This.ViewModel, "IsFoobar", Me.chkIsFoobar, "Value"
-        .BindPropertyPath This.ViewModel, "IsFoobarCaption", Me.chkIsFoobar, "Caption"
+        .BindPropertyPath ViewModel, "IsFoobar", Me.chkIsFoobar, "Value"
+        .BindPropertyPath ViewModel, "IsFoobarCaption", Me.chkIsFoobar, "Caption"
         
-        .BindPropertyPath This.ViewModel, "IsFoobar", Me.optIsFooBar, "Value"
-        .BindPropertyPath This.ViewModel, "IsFoobarCaption", Me.optIsFooBar, "Caption"
+        .BindPropertyPath ViewModel, "IsFoobar", Me.optIsFooBar, "Value"
+        .BindPropertyPath ViewModel, "IsFoobarCaption", Me.optIsFooBar, "Caption"
         
-        .BindPropertyPath This.ViewModel, "Size", Me.cboSize, "Value"
-        .BindPropertyPath This.ViewModel, "SizeOptions", Me.cboSize, "List"
+        .BindPropertyPath ViewModel, "Size", Me.cboSize, "Value"
+        .BindPropertyPath ViewModel, "SizeOptions", Me.cboSize, "List"
         
-        .BindPropertyPath This.ViewModel, "FavColorViewModel.FavoriteColors", Me.lvSize, "ListItems"
-        .BindPropertyPath This.ViewModel, "FavColorViewModel.FavoriteColor", Me.lvSize, "SelectedItem"
+        .BindPropertyPath ViewModel, "FavColorViewModel.FavoriteColors", Me.lvSize, "ListItems"
+        .BindPropertyPath ViewModel, "FavColorViewModel.FavoriteColor", Me.lvSize, "SelectedItem"
         
-        '.BindPropertyPath This.ViewModel, "FavColorViewModel.FavFoodViewModel.FavoriteFoods", Me.lvSize, "ListItems"
-        '.BindPropertyPath This.ViewModel, "FavColorViewModel.FavFoodViewModel.FavoriteFood", Me.lvSize, "SelectedItem"
+        '.BindPropertyPath ViewModel, "FavColorViewModel.FavFoodViewModel.FavoriteFoods", Me.lvSize, "ListItems"
+        '.BindPropertyPath ViewModel, "FavColorViewModel.FavFoodViewModel.FavoriteFood", Me.lvSize, "SelectedItem"
         
-        .BindPropertyPath This.ViewModel, "Size", Me.tvSize, "SelectedItem"
-        .BindPropertyPath This.ViewModel, "SizeOptions", Me.tvSize, "Nodes"
+        .BindPropertyPath ViewModel, "Size", Me.tvSize, "SelectedItem"
+        .BindPropertyPath ViewModel, "SizeOptions", Me.tvSize, "Nodes"
         
-        .BindPropertyPath This.ViewModel, "FirstName", Me.cmbTestMsgbox, "Caption"
+        .BindPropertyPath ViewModel, "FirstName", Me.cmbTestMsgbox, "Caption"
     End With
 End Sub
 
 Private Sub BindCommands()
     Dim SomeViewCommand As TestViewCommand
     Set SomeViewCommand = New TestViewCommand
-    Set SomeViewCommand.Context = This.ViewModel.Context
+    Set SomeViewCommand.Context = Context
     Set SomeViewCommand.View = Me
     
-    With This.ViewModel.Context.CommandManager
-        .BindCommand This.ViewModel.Context, This.ViewModel, This.ViewModel.TestMsgboxCommand, Me.cmbTestMsgbox
-        .BindCommand This.ViewModel.Context, This.ViewModel, This.ViewModel.TestDoCmdCommand, Me.cmdDoVMCmd
-        .BindCommand This.ViewModel.Context, This.ViewModel, SomeViewCommand, Me.cmdDoVCmd
+    Dim OKView As ICommand
+    Set OKView = OKViewCommand.Create(Context, Me, ViewModel)
+    
+    With This.Context.CommandManager
+        .BindCommand Context, ViewModel, ViewModel.TestMsgboxCommand, Me.cmbTestMsgbox
+        .BindCommand Context, ViewModel, SomeViewCommand, Me.cmdDoVCmd
+        .BindCommand Context, ViewModel, ViewModel.TestDoCmdCommand, Me.cmdDoVMCmd
+        .BindCommand Context, ViewModel, OKView, Me.OkButton
     End With
+End Sub
+
+Private Sub cmbTest_Click()
+    This.ViewModel.DebugPrint
+End Sub
+
+Private Sub cmdSetNameToBob_Click()
+    This.ViewModel.FirstName = "Bob"
+End Sub
+
+Private Sub CancelButton_Click()
+    OnCancel
 End Sub
 
 Public Sub DoSomething()
