@@ -69,12 +69,18 @@ End Property
 
 Private Sub PopulateDefaultData()
     Set This.Countries = New Scripting.Dictionary
-    With This.Countries
-        .Add Key:="USA", Item:="USA"
-        .Add Key:="UAE", Item:="UAE"
-        .Add Key:="Turkey", Item:="Turkey"
-    End With
-    This.Country = "Turkey"
     
+    Dim WorldModel As WorldModel
+    Set WorldModel = New WorldModel
+    WorldModel.Load
+    
+    Dim CountryName As Variant
+    For Each CountryName In WorldModel.Countries.Keys
+        With This.Countries
+            .Add Key:=CountryName, Item:=WorldModel.Countries.Item(CountryName)
+        End With
+    Next CountryName
+
     Set This.CityViewModel = New CityViewModel
+    This.CityViewModel.Load WorldModel
 End Sub

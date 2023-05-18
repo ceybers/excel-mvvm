@@ -47,7 +47,8 @@ Private Sub InitializeBindingStrategies()
 End Sub
 
 Public Sub BindPropertyPath(ByVal Source As Object, ByVal SourcePropertyPath As String, ByVal Target As Object, _
-    Optional ByVal TargetProperty As String, Optional ByVal BindingMode As BindingMode)
+    Optional ByVal TargetProperty As String, Optional ByVal BindingMode As BindingMode, _
+    Optional ByVal ValueConverter As IValueConverter)
     Dim BindingStrategy As IBindingStrategy
     
     On Error GoTo NoStrategyFound
@@ -59,7 +60,7 @@ Public Sub BindPropertyPath(ByVal Source As Object, ByVal SourcePropertyPath As 
     
     Dim NewBinding As IPropertyBinding
     Set NewBinding = BindingStrategy.CreateBinding(ThisBindingPath.Object, ThisBindingPath.PropertyName, _
-        Target, TargetProperty, BindingMode)
+        Target, TargetProperty, BindingMode, ValueConverter)
     This.PropertyBindings.Add Item:=NewBinding
     
     Dim SourceNotifier As INotifyPropertyChanged

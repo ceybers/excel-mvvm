@@ -63,11 +63,20 @@ End Property
 
 Private Sub PopulateDefaultData()
     Set This.Cities = New Scripting.Dictionary
-    With This.Cities
-        .Add Key:="Atlanta", Item:="Atlanta"
-        .Add Key:="Dallas", Item:="Dallas"
-        .Add Key:="Denver", Item:="Denver"
-    End With
-    This.City = "Atlanta"
+    'With This.Cities
+    '    .Add Key:="Atlanta", Item:="Atlanta"
+    '    .Add Key:="Dallas", Item:="Dallas"
+    '    .Add Key:="Denver", Item:="Denver"
+    'End With
+    'This.City = "Atlanta"
 End Sub
 
+Public Sub Load(ByVal WorldModel As WorldModel)
+    Dim Cities() As Variant
+    Cities = WorldModel.Cities.Items
+    
+    Dim i As Long
+    For i = LBound(Cities) To UBound(Cities)
+        This.Cities.Add Key:=Cities(i).Name, Item:=Cities(i)
+    Next i
+End Sub
