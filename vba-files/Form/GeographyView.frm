@@ -95,21 +95,21 @@ End Function
 
 Private Sub InitializeControls()
     '@Ignore ArgumentWithIncompatibleObjectType
-    'ViewModel.InitializeListViewSize Me.lvSize
+    CountryToListViewConverter.InitializeListView Me.ListView1
     '@Ignore ArgumentWithIncompatibleObjectType
-    'ViewModel.InitializeTreeViewSize Me.tvSize
+    CitytoListViewConverter.InitializeListView Me.ListView2
 End Sub
 
 Private Sub BindControls()
     With Context.BindingManager
-        .BindPropertyPath ViewModel, "Countries", Me.ListView1, "ListItems"
+        .BindPropertyPath ViewModel, "Countries", Me.ListView1, "ListItems", OneWayToSource, CountryToListViewConverter
         .BindPropertyPath ViewModel, "Country", Me.ListView1, "SelectedItem"
         .BindPropertyPath ViewModel, "Country", Me.TextBox1, "Value"
         
-        .BindPropertyPath ViewModel, "CityViewModel.Cities", Me.ListView2, "ListItems"
+        .BindPropertyPath ViewModel, "CityViewModel.Cities", Me.ListView2, "ListItems", OneWayToSource, CitytoListViewConverter
         .BindPropertyPath ViewModel, "CityViewModel.City", Me.ListView2, "SelectedItem"
-        .BindPropertyPath ViewModel, "CityViewModel.Cities", Me.ComboBox1, "List"
-        .BindPropertyPath ViewModel, "CityViewModel.City", Me.ComboBox1, "Value"
+        '.BindPropertyPath ViewModel, "CityViewModel.Cities", Me.ComboBox1, "List"
+        '.BindPropertyPath ViewModel, "CityViewModel.City", Me.ComboBox1, "Value"
     End With
 End Sub
 

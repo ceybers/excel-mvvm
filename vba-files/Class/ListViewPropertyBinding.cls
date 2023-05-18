@@ -25,6 +25,7 @@ Private Type TState
     SourcePropertyPath As String
     TargetProperty As String
     OneTimeBoundCounter As Long
+    ValueConverter As IValueConverter
 End Type
 Private This As TState
 
@@ -49,7 +50,8 @@ Private Property Get IPropertyBinding_TargetProperty() As String
 End Property
 
 Public Sub Create(ByVal Source As Object, ByVal SourcePropertyPath As String, ByVal Target As Control, _
-    Optional ByVal TargetProperty As String, Optional ByVal BindingMode As BindingMode)
+    Optional ByVal TargetProperty As String, Optional ByVal BindingMode As BindingMode, _
+    Optional ByVal ValueConverter As IValueConverter)
     If DO_DEBUG Then Debug.Print "ListViewPropertyBinding Create(vm, "; SourcePropertyPath; ", "; Target.Name; ")"
     
     Set This.ViewModel = Source
@@ -61,6 +63,10 @@ Public Sub Create(ByVal Source As Object, ByVal SourcePropertyPath As String, By
         This.BindingMode = TwoWayBinding
     Else
         This.BindingMode = OneWayBinding
+    End If
+    
+    If Not ValueConverter Is Nothing Then
+        Set This.ValueConverter = ValueConverter
     End If
     
     TryUpdateTarget
@@ -136,13 +142,18 @@ Private Sub UpdateListViewListItems()
     
     mListView.ListItems.Clear
     
-    Dim NewList As Scripting.Dictionary
-    Set NewList = CallByName(This.ViewModel, This.SourcePropertyPath, VbGet)
-    
-    Dim Key As Variant
-    For Each Key In NewList.Keys
-        mListView.ListItems.Add Key:=Key, Text:=NewList.Item(Key)
-    Next Key
+    If Not This.ValueConverter Is Nothing Then
+        This.ValueConverter.Convert Source:=CallByName(This.ViewModel, This.SourcePropertyPath, VbGet), Target:=mListView
+    Else
+        ' TODO Move to Default Value Converter
+        Dim NewList As Scripting.Dictionary
+        Set NewList = CallByName(This.ViewModel, This.SourcePropertyPath, VbGet)
+        
+        Dim Key As Variant
+        For Each Key In NewList.Keys
+            mListView.ListItems.Add Key:=Key, Text:=NewList.Item(Key)
+        Next Key
+    End If
 End Sub
 
 Private Sub UpdateSource()
