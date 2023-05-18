@@ -15,7 +15,7 @@ Implements INotifyPropertyChanged
 
 Private Type TState
     AppContext As AppContext
-    Handlers As Collection
+    Notifier As INotifyPropertyChanged
     
     FirstName As String
     LastName As String
@@ -159,9 +159,10 @@ Public Property Let Bar(ByVal RHS As Double)
     End If
 End Property
 
-Private Sub class_initialize()
+Private Sub Class_Initialize()
+    Set This.Notifier = New PropertyChangeNotifier
+    
     Set This.TestMsgboxCommand = New TestMsgboxCommand
-    Set This.Handlers = New Collection
     
     Set This.FavColorViewModel = New FavColorViewModel
 End Sub
@@ -179,14 +180,11 @@ Public Function Self() As SomeViewModel
 End Function
 
 Private Sub INotifyPropertyChanged_RegisterHandler(ByVal Handler As IHandlePropertyChanged)
-    This.Handlers.Add Item:=Handler
+    This.Notifier.RegisterHandler Handler
 End Sub
 
 Private Sub INotifyPropertyChanged_OnPropertyChanged(ByVal Source As Object, ByVal PropertyName As String)
-    Dim Handler As IHandlePropertyChanged
-    For Each Handler In This.Handlers
-        Handler.HandlePropertyChanged Me, PropertyName
-    Next Handler
+    This.Notifier.OnPropertyChanged Source, PropertyName
 End Sub
 
 Private Sub OnPropertyChanged(ByVal PropertyName As String)

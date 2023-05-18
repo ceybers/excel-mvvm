@@ -25,7 +25,7 @@ Private Property Get IAppContext_CommandManager() As CommandManager
     Set IAppContext_CommandManager = This.CommandManager
 End Property
 
-Private Sub class_initialize()
+Private Sub Class_Initialize()
     Set This.BindingManager = New BindingManager
     Set This.CommandManager = New CommandManager
 End Sub

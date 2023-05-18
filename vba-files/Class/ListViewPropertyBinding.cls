@@ -16,8 +16,8 @@ Implements IHandlePropertyChanged
 Private Const DO_DEBUG As Boolean = False
 
 '@MemberAttribute VB_VarHelpID, -1
-Private WithEvents lv As MSComctlLib.ListView
-Attribute lv.VB_VarHelpID = -1
+Private WithEvents mListView As MSComctlLib.ListView
+Attribute mListView.VB_VarHelpID = -1
 
 Private Type TState
     BindingMode As BindingMode
@@ -41,7 +41,7 @@ Private Property Get IPropertyBinding_SourcePropertyPath() As String
 End Property
 
 Private Property Get IPropertyBinding_Target() As Object
-    Set IPropertyBinding_Target = lv
+    Set IPropertyBinding_Target = mListView
 End Property
 
 Private Property Get IPropertyBinding_TargetProperty() As String
@@ -54,10 +54,10 @@ Public Sub Create(ByVal Source As Object, ByVal SourcePropertyPath As String, By
     
     Dim ThisBindingPath As IBindingPath
     Set ThisBindingPath = BindingPath.Create(Source, SourcePropertyPath)
-    Set This.ViewModel = ThisBindingPath.Object 'Source
-    This.SourcePropertyPath = ThisBindingPath.PropertyName 'SourcePropertyPath
+    Set This.ViewModel = ThisBindingPath.Object
+    This.SourcePropertyPath = ThisBindingPath.PropertyName
     
-    Set lv = Target
+    Set mListView = Target
     This.TargetProperty = TargetProperty
     
     If TargetProperty = "SelectedItem" Then
@@ -66,45 +66,36 @@ Public Sub Create(ByVal Source As Object, ByVal SourcePropertyPath As String, By
         This.BindingMode = OneWayBinding
     End If
     
-    UpdateTarget
+    TryUpdateTarget
 End Sub
 
-Private Sub lv_ItemClick(ByVal Item As MSComctlLib.ListItem)
+Private Sub mListView_ItemClick(ByVal Item As MSComctlLib.ListItem)
     If DO_DEBUG Then Debug.Print "ListViewPropertyBinding lv_ItemClick()"
-    UpdateSource
+    
+    TryUpdateSource
 End Sub
 
 Private Sub IHandlePropertyChanged_HandlePropertyChanged(ByVal Source As Object, ByVal PropertyName As String)
-    If PropertyName <> This.SourcePropertyPath Then Exit Sub
     If DO_DEBUG Then Debug.Print "ListViewPropertyBinding vm_PropertyChanged()"
-    UpdateTarget
+    If Not Source Is This.ViewModel Then Exit Sub
+    If PropertyName <> This.SourcePropertyPath Then Exit Sub
+    
+    TryUpdateTarget
 End Sub
 
-Private Sub UpdateTarget()
-    If CanUpdateTarget Then
-        If This.TargetProperty = "SelectedItem" Then
-            UpdateListViewSelectedItem
-        ElseIf This.TargetProperty = "ListItems" Then
-            UpdateListViewListItems
-        Else
-            Debug.Print "Not yet implemented"
-            Debug.Assert False
-        End If
+Private Sub TryUpdateTarget()
+    If Not CanUpdateTarget Then Exit Sub
+    
+    If This.TargetProperty = "SelectedItem" Then
+        UpdateListViewSelectedItem
+    ElseIf This.TargetProperty = "ListItems" Then
+        UpdateListViewListItems
+    Else
+        Debug.Print "Not yet implemented"
+        Debug.Assert False
     End If
     
     If This.BindingMode = OneTimeBinding Then This.OneTimeBoundCounter = This.OneTimeBoundCounter + 1
-End Sub
-
-Private Sub UpdateSource()
-    If This.BindingMode = TwoWayBinding Or This.BindingMode = OneWayToSource Then
-        If This.TargetProperty = "SelectedItem" Then
-            Dim vNewValue As Variant
-            vNewValue = CallByName(lv, This.TargetProperty, VbGet)
-            CallByName This.ViewModel, This.SourcePropertyPath, VbLet, vNewValue
-        Else
-            Debug.Assert False
-        End If
-    End If
 End Sub
 
 Private Function CanUpdateTarget() As Boolean
@@ -113,14 +104,31 @@ Private Function CanUpdateTarget() As Boolean
     If This.BindingMode = OneTimeBinding And This.OneTimeBoundCounter = 0 Then CanUpdateTarget = True
 End Function
 
+Private Sub TryUpdateSource()
+    If Not CanUpdateSource Then Exit Sub
+    
+    If This.TargetProperty = "SelectedItem" Then
+        UpdateSource
+    Else
+        Debug.Assert False
+    End If
+End Sub
+
+Private Function CanUpdateSource() As Boolean
+    If This.BindingMode = TwoWayBinding Then CanUpdateSource = True
+    If This.BindingMode = OneWayToSource Then CanUpdateSource = True
+End Function
+
 Private Sub UpdateListViewSelectedItem()
-    Dim vNewValue As Variant
+    If DO_DEBUG Then Debug.Print "ListViewPropertyBinding UpdateListViewSelectedItem()"
+    
+    Dim vNewValue As String
     vNewValue = CallByName(This.ViewModel, This.SourcePropertyPath, VbGet)
     
     Dim ListItem As ListItem
-    For Each ListItem In lv.ListItems
+    For Each ListItem In mListView.ListItems
         If ListItem.Text = vNewValue Then
-            Set lv.SelectedItem = ListItem
+            Set mListView.SelectedItem = ListItem
             Exit Sub
         End If
     Next ListItem
@@ -129,13 +137,21 @@ End Sub
 Private Sub UpdateListViewListItems()
     If DO_DEBUG Then Debug.Print "ListViewPropertyBinding UpdateListViewListItems()"
     
-    lv.ListItems.Clear
+    mListView.ListItems.Clear
     
     Dim NewList As Scripting.Dictionary
     Set NewList = CallByName(This.ViewModel, This.SourcePropertyPath, VbGet)
     
     Dim Key As Variant
     For Each Key In NewList.Keys
-        lv.ListItems.Add Key:=Key, Text:=NewList.Item(Key)
+        mListView.ListItems.Add Key:=Key, Text:=NewList.Item(Key)
     Next Key
+End Sub
+
+Private Sub UpdateSource()
+    If DO_DEBUG Then Debug.Print "ListViewPropertyBinding UpdateSource()"
+    
+    Dim vNewValue As Variant
+    vNewValue = CallByName(mListView, This.TargetProperty, VbGet)
+    CallByName This.ViewModel, This.SourcePropertyPath, VbLet, vNewValue
 End Sub

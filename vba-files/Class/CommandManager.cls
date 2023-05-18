@@ -15,7 +15,7 @@ Private Type TBindingManager
 End Type
 Private This As TBindingManager
 
-Private Sub class_initialize()
+Private Sub Class_Initialize()
     Set This.Commands = New Collection
 End Sub
 
