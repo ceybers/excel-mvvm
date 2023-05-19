@@ -59,11 +59,7 @@ Public Sub Create(ByVal Source As Object, ByVal SourcePropertyPath As String, By
     Set mComboBox = Target
     This.TargetProperty = TargetProperty
     
-    If TargetProperty = "Value" Then
-        This.BindingMode = TwoWayBinding
-    Else
-        This.BindingMode = OneWayBinding
-    End If
+    This.BindingMode = BindingMode
     
     UpdateTarget
 End Sub
@@ -82,12 +78,11 @@ End Sub
 Private Sub UpdateTarget()
     If CanUpdateTarget Then
         If This.TargetProperty = "Value" Then
-            UpdateComboBoxSelected
+            UpdateDefault
         ElseIf This.TargetProperty = "List" Then
             UpdateComboBoxList
         Else
-            Debug.Print "Not yet implemented"
-            Debug.Assert False
+            UpdateDefault
         End If
     End If
     
@@ -108,8 +103,8 @@ Private Function CanUpdateTarget() As Boolean
     If This.BindingMode = OneTimeBinding And This.OneTimeBoundCounter = 0 Then CanUpdateTarget = True
 End Function
 
-Private Sub UpdateComboBoxSelected()
-    Dim vNewValue As String
+Private Sub UpdateDefault()
+    Dim vNewValue As Variant
     vNewValue = CallByName(This.ViewModel, This.SourcePropertyPath, VbGet)
     CallByName mComboBox, This.TargetProperty, VbLet, vNewValue
 End Sub

@@ -59,27 +59,28 @@ Public Sub Create(ByVal Source As Object, ByVal SourcePropertyPath As String, By
     Set mOptionButton = Target
     This.TargetProperty = TargetProperty
     
-    If TargetProperty = "Value" Then
-        This.BindingMode = TwoWayBinding
-    Else
-        This.BindingMode = OneWayBinding
-    End If
+    This.BindingMode = BindingMode
+    'If TargetProperty = "Value" Then
+    '    This.BindingMode = TwoWayBinding
+    'Else
+    '    This.BindingMode = OneWayBinding
+    'End If
     
-    UpdateTarget
+    TryUpdateTarget
 End Sub
 
 Private Sub mOptionButton_Change()
     If DO_DEBUG Then Debug.Print "OptionButtonPropertyBinding opt_Change()"
-    UpdateSource
+    TryUpdateSource
 End Sub
 
 Private Sub IHandlePropertyChanged_HandlePropertyChanged(ByVal Source As Object, ByVal PropertyName As String)
     If PropertyName <> This.SourcePropertyPath Then Exit Sub
     If DO_DEBUG Then Debug.Print "OptionButtonPropertyBinding vm_PropertyChanged()"
-    UpdateTarget
+    TryUpdateTarget
 End Sub
 
-Private Sub UpdateTarget()
+Private Sub TryUpdateTarget()
     If CanUpdateTarget Then
         Dim vNewValue As String
         vNewValue = CallByName(This.ViewModel, This.SourcePropertyPath, VbGet)
@@ -89,17 +90,23 @@ Private Sub UpdateTarget()
     If This.BindingMode = OneTimeBinding Then This.OneTimeBoundCounter = This.OneTimeBoundCounter + 1
 End Sub
 
-Private Sub UpdateSource()
-    If This.BindingMode = TwoWayBinding Or This.BindingMode = OneWayToSource Then
-        Dim vNewValue As Variant
-        vNewValue = CallByName(mOptionButton, This.TargetProperty, VbGet)
-        CallByName This.ViewModel, This.SourcePropertyPath, VbLet, vNewValue
-    End If
-End Sub
-
 Private Function CanUpdateTarget() As Boolean
     If This.BindingMode = TwoWayBinding Then CanUpdateTarget = True
     If This.BindingMode = OneWayBinding Then CanUpdateTarget = True
     If This.BindingMode = OneTimeBinding And This.OneTimeBoundCounter = 0 Then CanUpdateTarget = True
 End Function
 
+Private Sub TryUpdateSource()
+    If CanUpdateSource Then
+        If This.BindingMode = TwoWayBinding Or This.BindingMode = OneWayToSource Then
+            Dim vNewValue As Variant
+            vNewValue = CallByName(mOptionButton, This.TargetProperty, VbGet)
+            CallByName This.ViewModel, This.SourcePropertyPath, VbLet, vNewValue
+        End If
+    End If
+End Sub
+
+Private Function CanUpdateSource() As Boolean
+    If This.BindingMode = TwoWayBinding Then CanUpdateSource = True
+    If This.BindingMode = OneWayToSource Then CanUpdateSource = True
+End Function
